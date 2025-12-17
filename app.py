@@ -12,51 +12,49 @@ if 'iniciar' not in st.session_state:
     st.session_state['iniciar'] = False
 
 def mostrar_tela_inicial():
-    col1, col2, col3 = st.columns([1, 2, 1])
+    # Estratégia: Usar colunas para centrar o conteúdo no meio da tela
+    # [1, 2, 1] significa que a coluna do meio é o dobro das laterais (foco central)
+    col_esq, col_centro, col_dir = st.columns([1, 2, 1])
     
-    with col2:
+    with col_centro:
+        # Espaçamento para empurrar o conteúdo um pouco para baixo
+        st.write("") 
         st.write("")
         st.write("")
-        
-        # --- LOGO LOCAL ---
-        try:
-            st.image("logo_ua.png", width=200)
-        except:
-            st.write("### 🏛️ Universidade de Aveiro")
-            st.caption("(Imagem 'logo_ua.png' não encontrada)")
-        
-        st.markdown("<h1 style='text-align: center;'>🧮 Primos e Padrões</h1>", unsafe_allow_html=True)
-        st.markdown("<h3 style='text-align: center;'>A beleza matemática da sequência 6n ± 1</h3>", unsafe_allow_html=True)
-        st.write("---")
-        st.markdown("""
-        <div style='text-align: center; font-size: 18px;'>
-        Esta aplicação explora a distribuição e os intervalos dos números primos.
-        <br><br>
-        <b>O que vai encontrar neste estudo:</b><br>
-        📉 Análise visual de densidade<br>
-        🧩 Padrões de congruência modular<br>
-        🔬 Investigação de "Primos Sexy" (Intervalo 6)<br>
-        💾 Exportação de dados para pesquisa
-        </div>
-        """, unsafe_allow_html=True)
-        
-        st.write("")
-        st.write("")
-        
-        cols_btn = st.columns([1, 1, 1])
-        if cols_btn[1].button("Iniciar Investigação ⚡", type="primary", use_container_width=True):
-            st.session_state['iniciar'] = True
-            st.rerun()
 
-        # --- CRÉDITOS ---
+        # --- LOGO (Centralizado e Limpo) ---
+        col_img_esq, col_img_centro, col_img_dir = st.columns([1, 1, 1])
+        with col_img_centro:
+            try:
+                st.image("logo_ua.png", width=150) # Tamanho mais discreto
+            except:
+                st.write("🏛️ **Universidade de Aveiro**")
+
+        # --- TÍTULO E SLOGAN ---
+        st.markdown("<h1 style='text-align: center; margin-bottom: 0px;'>🧮 Primos e Padrões</h1>", unsafe_allow_html=True)
+        st.markdown("<h4 style='text-align: center; color: gray; font-weight: normal;'>A beleza matemática da sequência 6n ± 1</h4>", unsafe_allow_html=True)
+        
+        st.write("")
+        st.write("")
+        st.write("")
+
+        # --- BOTÃO DE AÇÃO (O Hero da página) ---
+        # Colocamos colunas dentro da coluna central para o botão não ficar esticado
+        c1, c2, c3 = st.columns([1, 2, 1]) 
+        with c2:
+            if st.button("Iniciar Investigação ⚡", type="primary", use_container_width=True):
+                st.session_state['iniciar'] = True
+                st.rerun()
+
+        # --- CRÉDITOS (Rodapé Discreto) ---
+        st.write("")
+        st.write("")
         st.write("")
         st.write("")
         st.markdown("""
-        <div style='text-align: center; color: grey; font-size: 14px; margin-top: 30px;'>
-        <b>Universidade de Aveiro</b><br>
-        App desenvolvida no âmbito de <b>TMFC</b> por:<br>
-        <b>Catarina Mendes, Diogo Maria, Mateus Carmo e Micael Esteves</b><br>
-        <i>com ajuda do Gemini</i>
+        <div style='text-align: center; color: #b0b0b0; font-size: 12px;'>
+        Projeto <b>TMFC</b> | Universidade de Aveiro<br>
+        Catarina Mendes • Diogo Maria • Mateus Carmo • Micael Esteves
         </div>
         """, unsafe_allow_html=True)
 
@@ -297,8 +295,11 @@ def mostrar_app_principal():
                     A análise gráfica revelou que o intervalo 6 aparece mais vezes que o 2 ou o 4. Eis a explicação lógica:
 
                     Para um número ser Primo, ele tem de passar dois "filtros": **não ser divisível por 2** e **não ser divisível por 3**.
+                    """)
+                    st.markdown("""
                     
-
+                    """)
+                    st.markdown("""
                     * **O Número 6:** É o produto perfeito destes filtros ($2 \\times 3 = 6$).
                     * **A "Segurança" do 6:** Ao somarmos 6 a um número primo, **mantemos as propriedades** de resto dele. Se ele já passou nos filtros do 2 e do 3, o novo número também passará (ao contrário de somar 2 ou 4, que pode criar um múltiplo de 3).
                     
