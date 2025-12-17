@@ -1,7 +1,7 @@
 import streamlit as st
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd  # Adicionei pandas para criar a tabela numerada
+import pandas as pd
 
 # --- Configuração da Página ---
 st.set_page_config(page_title="Primos e Padrões", layout="wide")
@@ -16,8 +16,11 @@ def mostrar_tela_inicial():
     with col2:
         st.write("")
         st.write("")
-        # Logo da UA
-        st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Universidade_de_Aveiro_Logo.svg/1200px-Universidade_de_Aveiro_Logo.svg.png", width=200)
+        # Tentei um link SVG direto que costuma ser mais estável
+        try:
+            st.image("https://upload.wikimedia.org/wikipedia/commons/2/22/Universidade_de_Aveiro_Logo.svg", width=200)
+        except:
+            st.write("**Universidade de Aveiro**") # Texto de reserva caso a imagem falhe
         
         st.markdown("<h1 style='text-align: center;'>🌌 Primos e Padrões</h1>", unsafe_allow_html=True)
         st.markdown("<h3 style='text-align: center;'>Uma jornada visual pela matemática</h3>", unsafe_allow_html=True)
@@ -56,8 +59,11 @@ def mostrar_tela_inicial():
 
 def mostrar_app_principal():
     # --- SIDEBAR COM LOGO ---
-    st.sidebar.image("https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Universidade_de_Aveiro_Logo.svg/1200px-Universidade_de_Aveiro_Logo.svg.png", use_container_width=True)
-    
+    try:
+        st.sidebar.image("https://upload.wikimedia.org/wikipedia/commons/2/22/Universidade_de_Aveiro_Logo.svg", use_container_width=True)
+    except:
+        st.sidebar.markdown("### 🏛️ Universidade de Aveiro")
+
     st.sidebar.markdown("### ⚙️ Configurações")
     if st.sidebar.button("🏠 Voltar ao Início"):
         st.session_state['iniciar'] = False
@@ -190,7 +196,7 @@ def mostrar_app_principal():
 
                 st.pyplot(fig)
 
-        # === TAB 2: EXPLORADOR (MODIFICADO COM DATAFRAME NUMERADO) ===
+        # === TAB 2: EXPLORADOR ===
         with tab_expl:
             st.header("📂 Explorador de Intervalos")
             st.markdown("Selecione um intervalo específico para ver todos os pares de primos correspondentes.")
@@ -207,17 +213,9 @@ def mostrar_app_principal():
                 
                 with col_res:
                     st.write(f"**Tabela de pares com diferença {gap_escolhido}:**")
-                    
-                    # --- CRIAÇÃO DA TABELA NUMERADA ---
                     dados_pares = todos_intervalos[gap_escolhido]
-                    
-                    # Criar DataFrame com Pandas
                     df_pares = pd.DataFrame(dados_pares, columns=["Primo 1", "Primo 2"])
-                    
-                    # Começar o índice em 1 (Nº do Par)
                     df_pares.index = df_pares.index + 1
-                    
-                    # Mostrar a tabela
                     st.dataframe(df_pares, height=400, use_container_width=True)
                     st.caption("*A primeira coluna (índice) indica o número do par nesta sequência.*")
 
