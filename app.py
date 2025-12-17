@@ -73,7 +73,7 @@ def mostrar_app_principal():
 
     # --- INPUTS ---
     st.sidebar.header("Parâmetros")
-    # Aumentei o default para 500 para se ver melhor o efeito das cores
+    # Valor default bom para ver o efeito das cores
     end = st.sidebar.number_input("Ordem final da sequência (n):", min_value=10, max_value=10000, value=500, step=50)
 
     # --- CÁLCULO ---
@@ -143,7 +143,6 @@ def mostrar_app_principal():
         if len(primelstlst) > 2:
             st.subheader("📈 Distribuição e Intensidade dos Intervalos")
 
-            # Nova explicação atualizada para as cores
             st.info("""
             **Como ler este gráfico:**
             * **Eixo X (Horizontal):** O número primo onde estás.
@@ -159,25 +158,24 @@ def mostrar_app_principal():
             
             fig, ax = plt.subplots(figsize=(12, 6))
             
-            # --- A MUDANÇA PRINCIPAL AQUI ---
-            # c=y_values: A cor depende do tamanho do intervalo
-            # cmap='Spectral_r': Mapa de cores de Azul (pequeno) a Vermelho (grande)
+            # --- CORREÇÃO DE VISIBILIDADE AQUI ---
             scatter_plot = ax.scatter(
                 x_values, 
                 y_values, 
-                s=25, 
-                c=y_values,          # A cor é definida pelo valor Y
-                cmap='Spectral_r',   # Mapa de cores espectral invertido
+                s=30,                 # Aumentei ligeiramente o tamanho
+                c=y_values,
+                cmap='Spectral_r',
                 marker='o', 
-                alpha=0.8,
-                edgecolors='none'    # Remove contorno para as cores brilharem mais
+                alpha=0.9,            # Menos transparente (cores mais sólidas)
+                edgecolors='black',   # Contorno preto em todos os pontos
+                linewidth=0.4         # Espessura fina do contorno
             )
             
-            # Adicionar a barra de cor lateral (legenda)
+            # Barra de cor lateral
             cbar = plt.colorbar(scatter_plot, ax=ax)
             cbar.set_label('Tamanho do Intervalo (Gap)')
-            # -------------------------------
-
+            
+            # Ajustes finais do gráfico
             ticks_y = np.arange(2, max_y_zoom + 4, 2)
             ax.set_yticks(ticks_y)
             ax.set_ylim(0, max_y_zoom + 2)
