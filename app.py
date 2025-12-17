@@ -102,24 +102,27 @@ if st.sidebar.button("Calcular 🚀"):
             with st.expander("Ver lista completa de Primos"):
                 st.write(primelstlst)
 
-        # --- PARTE 2: O GRÁFICO (Versão Original - Linha Conectada) ---
+        # --- PARTE 2: O GRÁFICO (Versão Apenas Pontos) ---
         if len(twins) > 1:
             st.write("---")
-            st.subheader("📈 Distância entre pares de Primos Gémeos")
+            st.subheader("📈 Distância entre pares de Primos Gémeos (Dispersão)")
             
-            # Cálculo original do gráfico (gap entre o par atual e o próximo)
+            # Cálculo original do gráfico
             twingap = [twins[x+1][0] - twins[x][0] for x in range(len(twins)-1)]
             x_axis = [x[0] for x in twins[:-1]]
             
             fig, ax = plt.subplots(figsize=(10, 4))
             
-            # Plot original: Linha azul com marcadores
-            ax.plot(x_axis, twingap, marker='o', linestyle='-', color='b', markersize=3, alpha=0.6)
+            # --- ALTERAÇÃO AQUI ---
+            # Mudei linestyle='-' para linestyle='None'
+            # Aumentei markersize para 5 para os pontos ficarem mais visíveis
+            ax.plot(x_axis, twingap, marker='o', linestyle='None', color='b', markersize=5, alpha=0.6)
             
             ax.set_title("Variação da distância entre primos gémeos consecutivos")
             ax.set_xlabel("Valor do Primo")
             ax.set_ylabel("Distância (Gap)")
-            ax.grid(True, linestyle='--', alpha=0.5)
+            # Adicionei grid também no eixo X para facilitar a leitura dos pontos
+            ax.grid(True, which='both', linestyle='--', alpha=0.5)
             
             st.pyplot(fig)
         else:
