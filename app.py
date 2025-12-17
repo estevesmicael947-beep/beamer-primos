@@ -207,7 +207,7 @@ def mostrar_app_principal():
                 ax.set_xlim(0, max(x_values))
                 st.pyplot(fig)
 
-                # 3. Histograma de Frequências (AGORA COM ESPAÇAMENTO IGUAL)
+                # 3. Histograma de Frequências
                 st.write("---")
                 st.subheader("📊 Frequência dos Intervalos")
                 st.markdown("Este gráfico mostra **quais intervalos aparecem mais vezes**.")
@@ -219,19 +219,15 @@ def mostrar_app_principal():
                 filtered_gaps = [g for g in sorted_gaps if g <= max_y_zoom]
                 filtered_counts = [gap_counts[g] for g in filtered_gaps]
 
-                # --- TRUQUE PARA ESPAÇAMENTO IGUAL: Converter números para Texto (Categorias) ---
+                # Espaçamento igual
                 x_labels = [str(g) for g in filtered_gaps]
 
                 fig2, ax2 = plt.subplots(figsize=(12, 4))
-                
-                # Passamos x_labels (texto) em vez de filtered_gaps (números)
                 bars = ax2.bar(x_labels, filtered_counts, color='#4e79a7', edgecolor='black', alpha=0.7, width=0.6)
                 
                 ax2.set_xlabel("Tamanho do Intervalo (Gap)")
                 ax2.set_ylabel("Quantidade Encontrada")
-                ax2.set_title("Histograma de Frequência dos Intervalos")
-                
-                # Grid apenas no eixo Y para ficar limpo
+                ax2.set_title("Histograma de Frequência dos Intervalos (Por Categoria)")
                 ax2.grid(axis='y', linestyle='--', alpha=0.5)
                 
                 for bar in bars:
@@ -297,21 +293,21 @@ def mostrar_app_principal():
             ---
             """)
 
-            # --- EXPLICAÇÃO RIGOROSA ---
+            # --- EXPLICAÇÃO REESCRITA (MAIS LÚCIDA E DIRETA) ---
             if dominio_do_6:
                 st.markdown("""
-                ### 🌟 A Explicação Matemática do Intervalo 6
-                A predominância de pares com diferença de 6 (Primos Sexy) não é uma conjetura, mas sim um facto derivado de propriedades aritméticas:
+                ### 🌟 Porque é que o intervalo 6 aparece tantas vezes?
+                Para um número ser Primo, ele tem de passar dois testes "difíceis": não pode ser divisível por **2** nem por **3**.
                 
-                1.  **Produto dos Primeiros Primos:** O número 6 é o primorial de 3 ($2 \\times 3 = 6$).
-                2.  **Preservação de Congruências:** Somar 6 a um número não altera o seu resto na divisão por 2 nem por 3.
-                    * Se $p$ é primo ($p>3$), $p$ não é divisível por 2 nem por 3.
-                    * Logo, $p+6$ também não será divisível por 2 nem por 3.
-                3.  **Comparação com outros intervalos:**
-                    * Somar 2 ou 4 altera a congruência módulo 3, aumentando a probabilidade do resultado ser divisível por 3 (e logo, não primo).
-                    * Somar 6 evita os dois filtros mais comuns de compostos (divisibilidade por 2 e 3), tornando estatisticamente mais provável encontrar outro primo.
+
+                **A vantagem do 6:**
+                O número 6 é o produto perfeito destes dois testes ($2 \\times 3 = 6$).
                 
-                *Nota: Embora esta propriedade de densidade seja explicável, a afirmação de que existem infinitos pares com diferença 6 permanece por provar (Conjetura de Polignac).*
+                * **Somar 2 (Risco Alto):** Se somares 2 a um primo, corres o risco de cair num número divisível por 3.
+                * **Somar 6 (Segurança):** Como o 6 é divisível por 2 e por 3, ao somares 6 a um primo, manténs as propriedades dele. Se ele já não era divisível por 2 nem por 3, o novo número também não será.
+                
+                **Conclusão:**
+                Somar 6 é o caminho "mais seguro" para encontrar outro primo, pois evita automaticamente os múltiplos de 2 e de 3. Por isso, encontramos mais pares com diferença de 6 do que com 2 ou 4.
                 """)
             
             st.markdown("""
@@ -331,4 +327,3 @@ if st.session_state['iniciar']:
     mostrar_app_principal()
 else:
     mostrar_tela_inicial()
-
