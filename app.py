@@ -142,8 +142,7 @@ def mostrar_app_principal():
         y_values = [primelstlst[i+1] - primelstlst[i] for i in range(len(primelstlst)-1)]
         x_values = primelstlst[:-1]
 
-        # --- LÓGICA INTELIGENTE: Verificar se o 6 está a dominar ---
-        # Condição: Existem mais intervalos de 6 do que de 2 e de 4?
+        # --- LÓGICA INTELIGENTE ---
         dominio_do_6 = (len(sixes) > len(twins)) and (len(sixes) > len(fours))
 
         # --- CRIAÇÃO DOS TABS ---
@@ -169,7 +168,7 @@ def mostrar_app_principal():
             st.write("---")
 
             if len(primelstlst) > 2:
-                # 2. Gráfico de Dispersão (Scatter Plot)
+                # 2. Gráfico de Dispersão
                 st.subheader("📈 Distribuição e Intensidade dos Intervalos")
                 st.info("""
                 **Como ler este gráfico:**
@@ -208,7 +207,7 @@ def mostrar_app_principal():
                 ax.set_xlim(0, max(x_values))
                 st.pyplot(fig)
 
-                # 3. Histograma de Frequências
+                # 3. Histograma de Frequências (CORRIGIDO)
                 st.write("---")
                 st.subheader("📊 Frequência dos Intervalos")
                 st.markdown("Este gráfico mostra **quais intervalos aparecem mais vezes**.")
@@ -220,7 +219,9 @@ def mostrar_app_principal():
                 filtered_counts = [gap_counts[g] for g in filtered_gaps]
 
                 fig2, ax2 = plt.subplots(figsize=(12, 4))
-                bars = ax2.bar(filtered_gaps, filtered_counts, color='#4e79a7', edgecolor='black', alpha=0.7, width=1.5)
+                
+                # --- CORREÇÃO AQUI: WIDTH 0.8 PARA EVITAR SOBREPOSIÇÃO ---
+                bars = ax2.bar(filtered_gaps, filtered_counts, color='#4e79a7', edgecolor='black', alpha=0.7, width=0.8)
                 
                 ax2.set_xlabel("Tamanho do Intervalo (Gap)")
                 ax2.set_ylabel("Quantidade Encontrada")
@@ -236,19 +237,17 @@ def mostrar_app_principal():
                 
                 st.pyplot(fig2)
 
-                # --- MENSAGEM INTELIGENTE NO DASHBOARD ---
                 if dominio_do_6:
                     st.success("""
-                    👀 **Observação Interessante Detectada:**
-                    Repara no histograma acima: o intervalo **6** é mais frequente do que o 2 ou o 4.
-                    Vai à aba **'Sobre o Projeto'** para entender a explicação matemática deste fenómeno!
+                    👀 **Observação Importante:**
+                    Nota-se um pico claro no intervalo **6**. 
+                    A explicação para este fenómeno encontra-se na aba **'Sobre o Projeto'**.
                     """)
 
 
         # === TAB 2: EXPLORADOR ===
         with tab_expl:
             st.header("📂 Explorador de Dados")
-            
             col_left, col_right = st.columns([1, 2])
             
             with col_left:
@@ -288,30 +287,29 @@ def mostrar_app_principal():
             
             ### O Fundamento Matemático: 6n ± 1
             Todos os números primos maiores que 3 podem ser escritos na forma $6n - 1$ ou $6n + 1$.
-            Isto acontece porque qualquer número inteiro pode ser escrito como $6n + k$, onde $k \in \{0, 1, 2, 3, 4, 5\}$.
-            * Se $k = 0, 2, 4$, o número é par (divisível por 2).
-            * Se $k = 3$, o número é divisível por 3.
-            * Logo, restam apenas as opções **$k=1$** e **$k=5$** (que equivale a $-1$).
+            Isto é uma consequência da aritmética modular, dado que qualquer inteiro pode ser expresso como $6n + k$.
+            
+            ---
             """)
 
-            # --- EXPLICAÇÃO CONDICIONAL (Só aparece se o 6 dominar) ---
+            # --- EXPLICAÇÃO RIGOROSA ---
             if dominio_do_6:
                 st.markdown("""
-                ---
-                ### 🌟 Porquê tantos primos com intervalo de 6?
-                Como observaste nos teus resultados, o intervalo **6** é extremamente comum (mais que 2 ou 4). Isto é explicado matematicamente:
+                ### 🌟 A Explicação Matemática do Intervalo 6
+                A predominância de pares com diferença de 6 (Primos Sexy) não é uma conjetura, mas sim um facto derivado de propriedades aritméticas:
                 
-                1.  **Divisibilidade:** O número 6 é o produto dos dois primeiros primos ($2 \\times 3$).
-                2.  **O "Filtro" dos Primos:** Para um número ser primo, não pode ser divisível por 2 nem por 3.
-                3.  **A vantagem do 6:** * Se tivermos um primo $p$ (que não é divisível por 2 nem por 3), então $p+6$ mantém as mesmas propriedades de resto. 
-                    * Ou seja, somar 6 **não altera a paridade nem a divisibilidade por 3**.
-                    * Somar 2 ou 4 pode facilmente fazer cair num múltiplo de 3, eliminando a possibilidade de ser primo.
+                1.  **Produto dos Primeiros Primos:** O número 6 é o primorial de 3 ($2 \\times 3 = 6$).
+                2.  **Preservação de Congruências:** Somar 6 a um número não altera o seu resto na divisão por 2 nem por 3.
+                    * Se $p$ é primo ($p>3$), $p$ não é divisível por 2 nem por 3.
+                    * Logo, $p+6$ também não será divisível por 2 nem por 3.
+                3.  **Comparação com outros intervalos:**
+                    * Somar 2 ou 4 altera a congruência módulo 3, aumentando a probabilidade do resultado ser divisível por 3 (e logo, não primo).
+                    * Somar 6 evita os dois filtros mais comuns de compostos (divisibilidade por 2 e 3), tornando estatisticamente mais provável encontrar outro primo.
                 
-                Por isso, é "mais fácil" encontrar pares separados por 6 (Primos Sexy) do que por outros números pequenos.
+                *Nota: Embora esta propriedade de densidade seja explicável, a afirmação de que existem infinitos pares com diferença 6 permanece por provar (Conjetura de Polignac).*
                 """)
             
             st.markdown("""
-            ---
             ### Glossário de Intervalos
             * **Primos Gémeos:** Diferença de 2 (ex: 11, 13).
             * **Primos Primos:** Diferença de 4 (ex: 7, 11).
