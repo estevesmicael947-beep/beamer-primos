@@ -5,13 +5,12 @@ import numpy as np
 # --- Configuração da Página ---
 st.set_page_config(page_title="Primos e Padrões", layout="wide")
 
-st.title("Análise de Padrões em Números Primos")
+st.title("🔍 Análise de Padrões em Números Primos")
 st.markdown("""
 Esta aplicação gera números primos baseados na sequência **6n ± 1**, analisa as diferenças e permite **zoom interativo**.
 """)
 
 # --- 1. MEMÓRIA (Session State) ---
-# Impede que os dados desapareçam quando mexes no Slider de Zoom
 if 'primelstlst' not in st.session_state:
     st.session_state['primelstlst'] = []
 if 'calculou' not in st.session_state:
@@ -22,7 +21,7 @@ st.sidebar.header("Parâmetros")
 end = st.sidebar.number_input("Ordem final da sequência (n):", min_value=10, max_value=10000, value=100, step=10)
 
 # --- 3. LÓGICA DE CÁLCULO ---
-if st.sidebar.button("Calcular"):
+if st.sidebar.button("Calcular 🚀"):
     
     with st.spinner('A processar números primos...'):
         primelst = set({2, 3})
@@ -55,22 +54,17 @@ if st.sidebar.button("Calcular"):
                 primelst.add(num)
             n += 1
         
-        # Guarda o resultado na memória do navegador
+        # Guarda o resultado na memória
         st.session_state['primelstlst'] = sorted(list(primelst))
         st.session_state['calculou'] = True
 
-# --- 4. VISUALIZAÇÃO (Corre se houver dados na memória) ---
+# --- 4. VISUALIZAÇÃO ---
 if st.session_state['calculou']:
     
-    # Recupera a lista principal da memória
     primelstlst = st.session_state['primelstlst']
     
-    # Recalcula as categorias para as métricas (rápido)
-    twins = []
-    fours = []
-    sixes = []
-    eights = []
-    tens = []
+    # Recalcula as categorias
+    twins, fours, sixes, eights, tens = [], [], [], [], []
 
     for x in range(len(primelstlst)-1):
         diff = primelstlst[x+1] - primelstlst[x]
@@ -82,9 +76,8 @@ if st.session_state['calculou']:
         elif diff == 8: eights.append(pair)
         elif diff == 10: tens.append(pair)
 
-    # --- PARTE 1: MÉTRICAS E LISTAS (O teu design original) ---
-    
-    st.subheader("Estatísticas Encontradas")
+    # --- PARTE 1: MÉTRICAS E LISTAS ---
+    st.subheader("📊 Estatísticas Encontradas")
     col1, col2, col3, col4, col5 = st.columns(5)
     
     col1.metric("Gémeos (2)", len(twins))
@@ -95,7 +88,6 @@ if st.session_state['calculou']:
 
     st.info(f"Total de números primos encontrados: **{len(primelstlst)}**")
 
-    # Listas Detalhadas em colunas
     st.write("---")
     col_left, col_right = st.columns(2)
     
@@ -111,25 +103,32 @@ if st.session_state['calculou']:
         with st.expander("Ver lista completa de Primos"):
             st.write(primelstlst)
 
-    # --- PARTE 2: O GRÁFICO IMPECÁVEL (Com Zoom e Pontos) ---
+    # --- PARTE 2: O GRÁFICO ---
     
     if len(primelstlst) > 2:
         st.write("---")
-        st.subheader("Distribuição dos Intervalos (Gaps)")
+        st.subheader("📈 Distribuição dos Intervalos (Gaps)")
+
+        # --- NOVA EXPLICAÇÃO AQUI ---
+        st.info("""
+        **O que significam os pontos?** Os pontos marcam os primos que têm esse intervalo.  
+        * **Eixo Horizontal:** Indica qual é o número primo.
+        * **Eixo Vertical:** Indica qual é a distância para o primo seguinte.
+        """)
         
-        # Preparação dos dados para o plot
+        # Preparação dos dados
         x_values = primelstlst[:-1] 
         y_values = [primelstlst[i+1] - primelstlst[i] for i in range(len(primelstlst)-1)]
         
-        # O Slider de Zoom (Funciona graças ao session_state)
+        # Slider de Zoom
         max_y_zoom = st.slider("Altura Máxima do Eixo Y (Zoom):", min_value=6, max_value=100, value=20, step=2)
         
         fig, ax = plt.subplots(figsize=(12, 6))
         
-        # Pontinhos pretos (scatter) em vez de linha
+        # Pontinhos pretos (scatter)
         ax.scatter(x_values, y_values, s=15, c='black', marker='.', alpha=0.5)
         
-        # Configuração do Eixo Y baseada no slider
+        # Configuração do Eixo Y
         ticks_y = np.arange(2, max_y_zoom + 2, 2)
         ax.set_yticks(ticks_y)
         ax.set_ylim(0, max_y_zoom + 1)
@@ -142,8 +141,6 @@ if st.session_state['calculou']:
         ax.set_xlim(0, max(x_values))
 
         st.pyplot(fig)
-        st.caption("Dica: Use o slider acima para fazer zoom e ver melhor a densidade dos pontos nas linhas 2, 4 e 6.")
 
 else:
-    st.write("Ajuste o valor de **n** na barra lateral e clique em calcular.")
-
+    st.write("👈 Ajuste o valor de **n** na barra lateral e clique em calcular.")
