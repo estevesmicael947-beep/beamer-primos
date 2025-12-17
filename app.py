@@ -163,7 +163,6 @@ def mostrar_app_principal():
             if len(primelstlst) > 2:
                 st.subheader("📍 Dispersão dos Primos")
                 
-                # --- LEGENDA LIMPA ---
                 st.info("""
                 **Legenda do Gráfico:**
                 * **Eixo X:** Posição do primo. | **Eixo Y:** Distância ao próximo.
@@ -207,7 +206,6 @@ def mostrar_app_principal():
                 ax.set_xlabel("Número Primo ($p$)", fontsize=11)
                 ax.set_ylabel("Distância ao próximo primo (Intervalo)", fontsize=11)
                 
-                # --- NOVO NOME DO GRÁFICO ---
                 ax.set_title(f"Dispersão dos Intervalos entre Primos (Zoom até {max_y_zoom})", fontsize=13)
                 
                 ax.set_xlim(0, max(x_values))
@@ -225,13 +223,17 @@ def mostrar_app_principal():
                 x_labels = [str(g) for g in filtered_gaps]
 
                 fig2, ax2 = plt.subplots(figsize=(12, 4))
-                colors = ['#D500F9' if g == '1' else '#4e79a7' for g in x_labels]
                 
-                bars = ax2.bar(x_labels, filtered_counts, color=colors, edgecolor='black', alpha=0.8, width=0.6)
+                # --- ALTERAÇÃO AQUI: Removida a lógica de cor magenta ---
+                # Todas as barras usam agora a cor padrão '#4e79a7'
+                bars = ax2.bar(x_labels, filtered_counts, color='#4e79a7', edgecolor='black', alpha=0.8, width=0.6)
+                
                 ax2.yaxis.set_major_locator(MaxNLocator(integer=True))
                 
                 ax2.set_xlabel("Tipo de Intervalo")
                 ax2.set_ylabel("Frequência")
+                
+                # --- ALTERAÇÃO AQUI: Título simplificado ---
                 ax2.set_title("Dominância dos Intervalos")
                 ax2.grid(axis='y', linestyle='--', alpha=0.5)
                 
@@ -285,8 +287,16 @@ def mostrar_app_principal():
             
             ### 📐 Porquê 6n ± 1?
             Usamos $6n-1$ e $6n+1$ para garantir que cobrimos todos os primos possíveis (exceto 2 e 3).
-                ---
-        
+            
+            ---
+            
+            ### 🎢 A Oscilação dos Intervalos
+            Como observaste nos teus resultados (ex: **Intervalo 10 mais comum que o 8**), a distribuição não é uma linha a descer suave.
+            * Os intervalos tendem a ser mais frequentes se forem **múltiplos de 6** (6, 12, 18, 24...).
+            * Intervalos como 8 ou 10, que não são divisíveis por 3, são menos favorecidos.
+            * Em escalas pequenas, a diferença entre 8 e 10 pode dever-se a flutuações estatísticas locais, contrariando a ideia de que "maior é sempre mais raro".
+            """)
+
             if dominio_do_6:
                 with st.container(border=True):
                     st.markdown("""
@@ -311,5 +321,3 @@ if st.session_state['iniciar']:
     mostrar_app_principal()
 else:
     mostrar_tela_inicial()
-
-
