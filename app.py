@@ -205,6 +205,7 @@ def mostrar_app_principal():
                 ax.grid(True, axis='y', linestyle='-', linewidth=0.5, alpha=0.3, color='gray')
                 ax.set_xlabel("Número Primo ($p$)", fontsize=11)
                 ax.set_ylabel("Distância ao próximo primo (Intervalo)", fontsize=11)
+                
                 ax.set_title(f"Dispersão dos Intervalos entre Primos (Zoom até {max_y_zoom})", fontsize=13)
                 
                 ax.set_xlim(0, max(x_values))
@@ -222,7 +223,8 @@ def mostrar_app_principal():
                 x_labels = [str(g) for g in filtered_gaps]
 
                 fig2, ax2 = plt.subplots(figsize=(12, 4))
-                # Cor única para o histograma
+                
+                # Histograma com cor única (Azul)
                 bars = ax2.bar(x_labels, filtered_counts, color='#4e79a7', edgecolor='black', alpha=0.8, width=0.6)
                 
                 ax2.yaxis.set_major_locator(MaxNLocator(integer=True))
@@ -276,8 +278,9 @@ def mostrar_app_principal():
         # === TAB 3: SOBRE ===
         with tab_sobre:
             st.header("🎓 Contexto Teórico")
+            # --- CORREÇÃO DO NOME DA DISCIPLINA AQUI ---
             st.markdown("""
-            Projeto desenvolvido para a unidade curricular **TMFC (Teoria Matemática)** na Universidade de Aveiro.
+            Projeto desenvolvido para a unidade curricular **TMFC (Tópicos Matemáticos e Ferramentas Computacionais)** na Universidade de Aveiro.
             
             ### 📐 Porquê 6n ± 1?
             Usamos $6n-1$ e $6n+1$ para garantir que cobrimos todos os primos possíveis (exceto 2 e 3).
