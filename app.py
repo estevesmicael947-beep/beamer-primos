@@ -102,51 +102,57 @@ if st.sidebar.button("Calcular"):
             with st.expander("Ver lista completa de Primos"):
                 st.write(primelstlst)
 
-      # 3. O Gráfico (Dispersão: Primos vs Intervalos)
+      # 3. O Gráfico (Dispersão: Eixo Y Ajustado Dinamicamente)
         st.write("---")
-        st.subheader(" Distribuição dos Intervalos (Gaps)")
+        st.subheader("📈 Distribuição dos Intervalos (Gaps)")
         
         if len(primelstlst) > 2:
-            # Eixo X = O próprio número primo (até ao valor que o utilizador escolheu)
-            x_values = primelstlst[:-1] 
+            import numpy as np # Necessário para o eixo Y funcionar bem
             
-            # Eixo Y = A diferença para o próximo primo (2, 4, 6...)
+            # Dados X e Y
+            x_values = primelstlst[:-1] 
             y_values = [primelstlst[i+1] - primelstlst[i] for i in range(len(primelstlst)-1)]
             
-            # Criar o gráfico largo para se ver bem a linha temporal
+            # Descobrir qual é o gap máximo real (pode ser 10, 12, 14...)
+            max_gap_encontrado = max(y_values) if len(y_values) > 0 else 10
+            
+            # Criar o gráfico
             fig, ax = plt.subplots(figsize=(12, 6))
             
-            # DESENHAR OS PONTOS
-            # s=10 -> Pontos pequenos para não encavalitar
-            # alpha=0.5 -> Transparência (se houver muitos pontos juntos, fica mais escuro)
-            # c='#3366cc' -> Um azul profissional
-            ax.scatter(x_values, y_values, s=15, c='#3366cc', marker='o', alpha=0.6)
+            # Pontos
+            ax.scatter(x_values, y_values, s=20, c='#3366cc', marker='o', alpha=0.6)
             
-            # --- O SEGREDO PARA FICAR COMO QUERES ---
-            # Forçar o eixo Y a mostrar apenas números pares (0, 2, 4, 6, 8...)
-            max_gap = max(y_values) if len(y_values) > 0 else 10
-            import numpy as np
-            # Cria ticks de 2 em 2 até ao máximo encontrado
-            ax.set_yticks(np.arange(0, max_gap + 4, 2))
+            # --- EIXO Y PERFEITO ---
+            # Cria ticks de 2 em 2, começando no 2 e indo EXATAMENTE até ao máximo encontrado
+            # O +1 no range serve para garantir que o último número é incluído
+            yticks = np.arange(2, max_gap_encontrado + 2, 2)
+            ax.set_yticks(yticks)
+            ax.set_ylim(0, max_gap_encontrado + 2) # Dá uma margem visual pequena em cima
             
             # Labels e Títulos
-            ax.set_xlabel("Número Primo (Valor x)", fontsize=12)
-            ax.set_ylabel("Tamanho do Intervalo (Gap)", fontsize=12)
-            ax.set_title(f"Visualização dos Gaps para primos até {end}", fontsize=14)
+            ax.set_xlabel("Número Primo ($p$)", fontsize=12)
+            ax.set_ylabel("Intervalo ($p_{next} - p$)", fontsize=12)
+            ax.set_title(f"Distribuição dos Intervalos até n={end}", fontsize=14)
             
-            # Grelha horizontal forte para guiar o olho nas linhas 2, 4, 6...
-            ax.grid(True, axis='y', linestyle='-', alpha=0.3, color='gray')
+            # Grelha horizontal para facilitar a leitura das linhas
+            ax.grid(True, axis='y', linestyle='-', alpha=0.3)
             
-            # Limites do eixo X para colar com o input do utilizador
+            # Ajuste do eixo X
             ax.set_xlim(0, end)
 
             st.pyplot(fig)
+            
+            st.caption(f"Nota: O gráfico mostra intervalos até {max_gap_encontrado}. Se vires pontos acima do 10, são gaps maiores que a tua lista inicial não apanhava!")
+            
+        else:
+            st.warning("Aumente o valor de n para gerar o gráfico.")
             
         else:
             st.warning("Aumente o valor de n para gerar o gráfico.")
 
 else:
     st.write(" Ajuste o valor de **n** na barra lateral e clique em calcular.")
+
 
 
 
