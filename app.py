@@ -102,49 +102,57 @@ if st.sidebar.button("Calcular"):
             with st.expander("Ver lista completa de Primos"):
                 st.write(primelstlst)
 
-    # 3. O Gráfico (Gráfico de Barras - Comparação de Quantidades)
+  # 3. O Gráfico (Estilo "Pontinhos" / Scatter Plot)
         st.write("---")
-        st.subheader("📊 Comparação: Qual é o padrão mais comum?")
+        st.subheader("📈 Distribuição dos Intervalos (Scatter Plot)")
         
         if len(primelstlst) > 2:
+            import numpy as np
             
-            # Preparar os dados para o gráfico de barras
-            categorias = ['Gémeos (Diff 2)', 'Diff 4', 'Diff 6', 'Diff 8', 'Diff 10']
-            quantidades = [len(twins), len(fours), len(sixes), len(eights), len(tens)]
+            # Dados
+            x_values = primelstlst[:-1] 
+            y_values = [primelstlst[i+1] - primelstlst[i] for i in range(len(primelstlst)-1)]
+            max_gap = max(y_values) if len(y_values) > 0 else 10
             
-            # Criar o gráfico
-            fig, ax = plt.subplots(figsize=(10, 5))
+            # Criar a figura
+            fig, ax = plt.subplots(figsize=(12, 6))
             
-            # Criar as barras com cores diferentes para cada categoria
-            cores = ['#ff4b4b', '#1f77b4', '#2ca02c', '#ff7f0e', '#9467bd']
-            barras = ax.bar(categorias, quantidades, color=cores, alpha=0.8)
+            # --- OS PONTINHOS ---
+            # s=10: Tamanho pequeno para parecerem "pontinhos"
+            # c='black': Cor preta para alto contraste
+            # alpha=0.5: Transparência (se muitos pontos ficarem uns em cima dos outros, fica mais escuro)
+            # marker='o': Formato de bolinha
+            ax.scatter(x_values, y_values, s=10, c='black', marker='o', alpha=0.5)
             
-            # Títulos e Eixos
-            ax.set_ylabel("Quantidade Encontrada", fontsize=12)
-            ax.set_title(f"Frequência dos Diferentes Tipos de Primos (n={end})", fontsize=14)
+            # --- EIXO Y (Intervalos: 2, 4, 6...) ---
+            # Cria a escala apenas com números pares
+            ticks_y = np.arange(2, max_gap + 2, 2)
+            ax.set_yticks(ticks_y)
+            ax.set_ylim(0, max_gap + 2) # Margem ligeira
             
-            # Remover linhas desnecessárias para limpar o visual
-            ax.spines['top'].set_visible(False)
-            ax.spines['right'].set_visible(False)
-            ax.grid(axis='y', linestyle='--', alpha=0.3)
+            # --- VISUALIZAÇÃO ---
+            # Grelha horizontal fina para guiar o olhar nas linhas 2, 4, 6...
+            ax.grid(True, axis='y', linestyle='-', linewidth=0.5, alpha=0.3, color='gray')
             
-            # --- O TRUQUE PARA SER FÁCIL DE LER ---
-            # Escrever o número exato em cima de cada barra
-            for barra in barras:
-                height = barra.get_height()
-                ax.annotate(f'{height}',
-                            xy=(barra.get_x() + barra.get_width() / 2, height),
-                            xytext=(0, 3),  # 3 points vertical offset
-                            textcoords="offset points",
-                            ha='center', va='bottom', fontweight='bold')
+            # Labels (Títulos dos Eixos)
+            ax.set_xlabel("Número Primo ($p$)", fontsize=11)
+            ax.set_ylabel("Tamanho do Intervalo (Gap)", fontsize=11)
+            ax.set_title(f"Padrão dos Intervalos entre Primos (até {end})", fontsize=13)
+            
+            # Ajustar limite X para coincidir com o input do utilizador
+            ax.set_xlim(0, end)
 
+            # Mostrar gráfico
             st.pyplot(fig)
+            
+            st.caption("Cada ponto preto representa um intervalo entre dois primos consecutivos.")
             
         else:
             st.warning("Aumente o valor de n para gerar o gráfico.")
 
 else:
     st.write(" Ajuste o valor de **n** na barra lateral e clique em calcular.")
+
 
 
 
