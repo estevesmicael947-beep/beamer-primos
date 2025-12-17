@@ -1,6 +1,7 @@
 import streamlit as st
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 
 # --- Configuração da Página ---
 st.set_page_config(page_title="Primos e Padrões", layout="wide")
@@ -8,7 +9,7 @@ st.set_page_config(page_title="Primos e Padrões", layout="wide")
 st.title("🔍 Análise de Padrões em Números Primos")
 
 # --- 1. MEMÓRIA (Session State) ---
-# Isto impede que o programa "feche" quando mexes no zoom
+# Impede que o programa reinicie ao mexer no zoom
 if 'primelstlst' not in st.session_state:
     st.session_state['primelstlst'] = []
 if 'calculou' not in st.session_state:
@@ -18,7 +19,7 @@ if 'calculou' not in st.session_state:
 st.sidebar.header("Parâmetros")
 end = st.sidebar.number_input("Ordem final da sequência (n):", min_value=10, max_value=10000, value=100, step=10)
 
-# --- 3. CÁLCULO (Só corre se clicares no botão) ---
+# --- 3. CÁLCULO ---
 if st.sidebar.button("Calcular 🚀"):
     with st.spinner('A processar números primos...'):
         primelst = set({2, 3})
@@ -55,61 +56,69 @@ if st.sidebar.button("Calcular 🚀"):
         st.session_state['primelstlst'] = sorted(list(primelst))
         st.session_state['calculou'] = True
 
-# --- 4. VISUALIZAÇÃO (Corre sempre que houver dados na memória) ---
+# --- 4. VISUALIZAÇÃO ---
 if st.session_state['calculou']:
     
-    # Recupera os dados da memória
+    # Recupera dados
     primelstlst = st.session_state['primelstlst']
     
-    # Prepara os dados estatísticos
-    twins, fours, sixes, eights, tens = [], [], [], [], []
+    # Prepara listas de diferenças
+    # (Gap do primo i é a distância até i+1)
+    gaps_list = [primelstlst[i+1] - primelstlst[i] for i in range(len(primelstlst)-1)]
     
-    for x in range(len(primelstlst)-1):
-        diff = primelstlst[x+1] - primelstlst[x]
-        pair = (primelstlst[x], primelstlst[x+1])
-        if diff == 2: twins.append(pair)
-        elif diff == 4: fours.append(pair)
-        elif diff == 6: sixes.append(pair)
-        elif diff == 8: eights.append(pair)
-        elif diff == 10: tens.append(pair)
+    # Estatísticas simples para visualização rápida
+    twins = [p for i, p in enumerate(primelstlst[:-1]) if gaps_list[i] == 2]
+    sixes = [p for i, p in enumerate(primelstlst[:-1]) if gaps_list[i] == 6]
 
-    # Métricas
-    st.subheader("📊 Estatísticas Encontradas")
-    col1, col2, col3, col4, col5 = st.columns(5)
-    col1.metric("Gémeos (2)", len(twins))
-    col2.metric("Dif. 4", len(fours))
-    col3.metric("Dif. 6", len(sixes))
-    col4.metric("Dif. 8", len(eights))
-    col5.metric("Dif. 10", len(tens))
+    # --- MÉTRICAS ---
+    st.subheader("📊 Resumo Estatístico")
+    c1, c2, c3 = st.columns(3)
+    c1.metric("Total de Primos", len(primelstlst))
+    c2.metric("Primos Gémeos (Gap 2)", len(twins))
+    c3.metric("Primos Sexy (Gap 6)", len(sixes))
     
-    st.info(f"Total de números primos encontrados: **{len(primelstlst)}**")
-
-    # Listas (Expansores)
     st.write("---")
-    with st.expander("Ver Listas Detalhadas"):
-        c1, c2 = st.columns(2)
-        c1.write(f"Gémeos: {twins}")
-        c2.write(f"Todos: {primelstlst}")
 
-    # --- O GRÁFICO (Com Zoom Estável) ---
+    # --- LISTAGEM DOS DADOS (O QUE PEDISTE) ---
+    st.subheader("📋 Dados Brutos")
+    
+    # Opção A: Tabela Lado a Lado (Listas completas)
+    col_primos, col_gaps = st.columns(2)
+    
+    with col_primos:
+        st.write("**Lista de Primos Encontrados:**")
+        # Mostra como uma caixa de texto rolável para não ocupar a página toda
+        st.text_area("Primos", value=str(primelstlst), height=150, label_visibility="collapsed")
+        
+    with col_gaps:
+        st.write("**Lista de Intervalos (Gaps):**")
+        st.text_area("Intervalos", value=str(gaps_list), height=150, label_visibility="collapsed")
+
+    # Opção B: Tabela Relacional (Mais fácil de ler)
+    with st.expander("Ver Tabela Detalhada (Primo -> Intervalo)"):
+        df = pd.DataFrame({
+            "Número Primo": primelstlst[:-1],
+            "Distância para o próximo": gaps_list
+        })
+        st.dataframe(df, use_container_width=True)
+
+    # --- O GRÁFICO ---
     st.write("---")
-    st.subheader("📈 Distribuição dos Intervalos (Gaps)")
+    st.subheader("📈 Distribuição Visual dos Intervalos")
     
     if len(primelstlst) > 2:
-        # Dados do gráfico
         x_values = primelstlst[:-1] 
-        y_values = [primelstlst[i+1] - primelstlst[i] for i in range(len(primelstlst)-1)]
+        y_values = gaps_list
         
-        # --- O SLIDER AGORA FUNCIONA ---
-        # Como está fora do "if button", ele não reseta os dados
+        # Slider de Zoom
         max_y_zoom = st.slider("Altura Máxima do Eixo Y (Zoom):", min_value=6, max_value=100, value=20, step=2)
         
         fig, ax = plt.subplots(figsize=(12, 6))
         
-        # Pontinhos pretos
+        # Pontinhos
         ax.scatter(x_values, y_values, s=15, c='black', marker='.', alpha=0.5)
         
-        # Eixo Y controlado pelo slider
+        # Eixo Y
         ticks_y = np.arange(2, max_y_zoom + 2, 2)
         ax.set_yticks(ticks_y)
         ax.set_ylim(0, max_y_zoom + 1)
@@ -117,12 +126,12 @@ if st.session_state['calculou']:
         # Estilo
         ax.grid(True, axis='y', linestyle='-', linewidth=0.5, alpha=0.3, color='gray')
         ax.set_xlabel("Número Primo ($p$)", fontsize=11)
-        ax.set_ylabel("Tamanho do Intervalo (Gap)", fontsize=11)
+        ax.set_ylabel("Tamanho do Intervalo ($p_{next} - p$)", fontsize=11)
         ax.set_title(f"Padrão dos Intervalos (Focando nos gaps até {max_y_zoom})", fontsize=13)
-        ax.set_xlim(0, max(x_values)) # Usa o valor real do cálculo
+        ax.set_xlim(0, max(x_values))
 
         st.pyplot(fig)
-        st.caption("Usa o slider acima para fazer zoom no eixo Y.")
+        st.caption("Usa o slider acima para cortar os 'gaps' muito grandes e focar nas linhas de baixo.")
 
 else:
     st.write("👈 Ajuste o valor de **n** na barra lateral e clique em calcular.")
