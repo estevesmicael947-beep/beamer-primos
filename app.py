@@ -232,7 +232,7 @@ def mostrar_app_principal():
                 
                 ax2.set_xlabel("Tipo de Intervalo")
                 ax2.set_ylabel("Frequência")
-                ax2.set_title("Dominância dos Intervalos (Magenta = Intervalo Único)")
+                ax2.set_title("Dominância dos Intervalos")
                 ax2.grid(axis='y', linestyle='--', alpha=0.5)
                 
                 for bar in bars:
@@ -319,3 +319,4 @@ if st.session_state['iniciar']:
     mostrar_app_principal()
 else:
     mostrar_tela_inicial()
+
