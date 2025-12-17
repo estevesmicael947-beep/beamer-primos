@@ -35,7 +35,7 @@ def mostrar_tela_inicial():
         <b>O que vai encontrar neste estudo:</b><br>
         📉 Análise visual de densidade<br>
         🧩 Padrões de congruência modular<br>
-        🔬 Investigação de "Primos Sexy" (Gap 6)<br>
+        🔬 Investigação de "Primos Sexy" (Intervalo 6)<br>
         💾 Exportação de dados para pesquisa
         </div>
         """, unsafe_allow_html=True)
@@ -137,17 +137,17 @@ def mostrar_app_principal():
         eights = todos_intervalos.get(8, [])
         tens = todos_intervalos.get(10, [])
 
-        # Preparar dados do gráfico (Gaps)
+        # Preparar dados do gráfico (Intervalos)
         y_values = [primelstlst[i+1] - primelstlst[i] for i in range(len(primelstlst)-1)]
         x_values = primelstlst[:-1]
 
         # --- LÓGICA INTELIGENTE ---
         dominio_do_6 = (len(sixes) > len(twins)) and (len(sixes) > len(fours))
 
-        # --- CRIAÇÃO DOS TABS TEMÁTICOS ---
+        # --- CRIAÇÃO DAS ABAS TEMÁTICAS ---
         tab_dash, tab_expl, tab_sobre = st.tabs(["📉 Análise Visual", "🔬 Laboratório de Dados", "🎓 Teoria Matemática"])
 
-        # === TAB 1: DASHBOARD ===
+        # === TAB 1: PAINEL DE ANÁLISE ===
         with tab_dash:
             # 1. Métricas Principais
             st.markdown("### 📊 Indicadores Globais")
@@ -156,13 +156,13 @@ def mostrar_app_principal():
             with kpi2: st.metric("🔝 Maior Primo (Max)", max(primelstlst) if primelstlst else 0, border=True)
             with kpi3: st.metric("📏 Total de Intervalos", len(primelstlst)-1 if len(primelstlst) > 1 else 0, border=True)
 
-            st.markdown("#### Distribuição dos Intervalos (Gaps):")
+            st.markdown("#### Distribuição dos Intervalos:")
             col1, col2, col3, col4, col5 = st.columns(5)
-            col1.metric("Gémeos (Gap 2)", len(twins))
-            col2.metric("Primos (Gap 4)", len(fours))
-            col3.metric("Sexy (Gap 6)", len(sixes))
-            col4.metric("Gap 8", len(eights))
-            col5.metric("Gap 10", len(tens))
+            col1.metric("Gémeos (Intervalo 2)", len(twins))
+            col2.metric("Primos (Intervalo 4)", len(fours))
+            col3.metric("Sexy (Intervalo 6)", len(sixes))
+            col4.metric("Intervalo 8", len(eights))
+            col5.metric("Intervalo 10", len(tens))
 
             st.write("---")
 
@@ -172,8 +172,8 @@ def mostrar_app_principal():
                 st.info("""
                 **Legenda do Gráfico:**
                 * **Eixo X ($p$):** A posição na linha dos números.
-                * **Eixo Y (Gap):** A distância até ao próximo primo.
-                * 🎨 **Cor:** Azul (Gaps comuns) ➝ Vermelho (Gaps raros).
+                * **Eixo Y (Intervalo):** A distância até ao próximo primo.
+                * 🎨 **Cor:** Azul (Intervalos comuns) ➝ Vermelho (Intervalos raros).
                 """)
                 
                 max_y_zoom = st.slider("Zoom Vertical (Eixo Y):", min_value=6, max_value=max(y_values) if y_values else 100, value=30, step=2)
@@ -193,14 +193,14 @@ def mostrar_app_principal():
                 )
                 
                 cbar = plt.colorbar(scatter_plot, ax=ax)
-                cbar.set_label('Tamanho do Gap')
+                cbar.set_label('Tamanho do Intervalo')
                 
                 ticks_y = np.arange(2, max_y_zoom + 4, 2)
                 ax.set_yticks(ticks_y)
                 ax.set_ylim(0, max_y_zoom + 2)
                 ax.grid(True, axis='y', linestyle='-', linewidth=0.5, alpha=0.3, color='gray')
                 ax.set_xlabel("Número Primo ($p$)", fontsize=11)
-                ax.set_ylabel("Distância ao próximo primo (Gap)", fontsize=11)
+                ax.set_ylabel("Distância ao próximo primo (Intervalo)", fontsize=11)
                 ax.set_title(f"Mapa de Calor dos Intervalos (Zoom até {max_y_zoom})", fontsize=13)
                 ax.set_xlim(0, max(x_values))
                 st.pyplot(fig)
@@ -237,7 +237,7 @@ def mostrar_app_principal():
                 if dominio_do_6:
                     with st.container(border=True):
                         st.markdown("""
-                        ### 💡 Insight Matemático Detetado
+                        ### 💡 Observação Matemática Detetada
                         **O intervalo 6 é o mais frequente.**
                         Isto não é coincidência. Consulte a aba **'🎓 Teoria Matemática'** para entender por que razão o 6 "vence" o 2 e o 4.
                         """)
@@ -254,15 +254,15 @@ def mostrar_app_principal():
                 if not gaps_disponiveis:
                     st.warning("Aguardando cálculos.")
                 else:
-                    gap_escolhido = st.selectbox("Selecione o Gap para investigar:", options=gaps_disponiveis)
+                    gap_escolhido = st.selectbox("Selecione o Intervalo para investigar:", options=gaps_disponiveis)
                     qtd_encontrada = len(todos_intervalos[gap_escolhido])
-                    st.success(f"Foram isolados **{qtd_encontrada}** pares com Gap **{gap_escolhido}**.")
+                    st.success(f"Foram isolados **{qtd_encontrada}** pares com Intervalo **{gap_escolhido}**.")
                     
                     st.markdown("---")
                     st.markdown("### 2. Exportação")
                     csv_data = pd.DataFrame(primelstlst, columns=["Números Primos"]).to_csv(index=False).encode('utf-8')
                     st.download_button(
-                        label="💾 Exportar Dataset (CSV)",
+                        label="💾 Exportar Conjunto de Dados (CSV)",
                         data=csv_data,
                         file_name='dataset_primos.csv',
                         mime='text/csv',
@@ -270,7 +270,7 @@ def mostrar_app_principal():
                     )
 
             with col_right:
-                st.markdown(f"### 📋 Resultados: Gap {gap_escolhido}")
+                st.markdown(f"### 📋 Resultados: Intervalo {gap_escolhido}")
                 dados_pares = todos_intervalos[gap_escolhido]
                 df_pares = pd.DataFrame(dados_pares, columns=["Primo A", "Primo B"])
                 df_pares.index = df_pares.index + 1
@@ -298,7 +298,7 @@ def mostrar_app_principal():
 
                     Para um número ser Primo, ele tem de passar dois "filtros": **não ser divisível por 2** e **não ser divisível por 3**.
                     
-                    
+
                     * **O Número 6:** É o produto perfeito destes filtros ($2 \\times 3 = 6$).
                     * **A "Segurança" do 6:** Ao somarmos 6 a um número primo, **mantemos as propriedades** de resto dele. Se ele já passou nos filtros do 2 e do 3, o novo número também passará (ao contrário de somar 2 ou 4, que pode criar um múltiplo de 3).
                     
@@ -306,10 +306,10 @@ def mostrar_app_principal():
                     """)
             
             st.markdown("""
-            ### 📚 Glossário
+            ### 📚 Glossário de Intervalos
             * **Primos Gémeos:** $p, p+2$ (ex: 11, 13).
             * **Primos Primos:** $p, p+4$ (ex: 7, 11).
-            * **Primos Sexy:** $p, p+6$ (ex: 5, 11) - do latim *sex* (seis).
+            * **Primos Sexy:** $p, p+6$ (ex: 5, 11) - o nome vem do latim *sex* (seis).
             """)
             st.write("---")
             st.caption("Investigação realizada por: Catarina Mendes, Diogo Maria, Mateus Carmo e Micael Esteves.")
