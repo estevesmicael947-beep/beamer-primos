@@ -40,13 +40,14 @@ def mostrar_tela_inicial():
             st.session_state['iniciar'] = True
             st.rerun()
 
-        # --- CRÉDITOS ---
+        # --- CRÉDITOS (ATUALIZADOS) ---
         st.write("")
         st.write("")
         st.write("")
         st.markdown("""
         <div style='text-align: center; color: grey; font-size: 14px; margin-top: 30px;'>
-        App desenvolvida por: <b>Catarina Mendes, Diogo Maria, Mateus Carmo e Micael Esteves</b><br>
+        App desenvolvida no âmbito de <b>TMFC</b> por:<br>
+        <b>Catarina Mendes, Diogo Maria, Mateus Carmo e Micael Esteves</b><br>
         <i>com ajuda do Gemini</i>
         </div>
         """, unsafe_allow_html=True)
@@ -60,9 +61,9 @@ def mostrar_app_principal():
         st.session_state['iniciar'] = False
         st.rerun()
     
-    # Créditos também na sidebar da app (opcional, mas fica bem)
+    # Créditos na sidebar
     st.sidebar.markdown("---")
-    st.sidebar.caption("Desenvolvido por: Catarina Mendes, Diogo Maria, Mateus Carmo e Micael Esteves")
+    st.sidebar.caption("Desenvolvido no âmbito de **TMFC** por: Catarina Mendes, Diogo Maria, Mateus Carmo e Micael Esteves")
 
     st.title("🔍 Análise de Padrões em Números Primos")
     
