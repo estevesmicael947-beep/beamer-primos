@@ -22,7 +22,8 @@ def mostrar_tela_inicial():
         try:
             st.image("logo_ua.png", width=150)
         except:
-            st.write("🏛️ **Universidade de Aveiro**")
+            st.write("### 🏛️ Universidade de Aveiro")
+            st.caption("(Imagem 'logo_ua.png' não encontrada)")
 
         st.markdown("<h1 style='text-align: center; margin-bottom: 0px;'>🧮 Primos e Padrões</h1>", unsafe_allow_html=True)
         st.markdown("<h4 style='text-align: center; color: gray; font-weight: normal;'>A beleza matemática da sequência 6n ± 1</h4>", unsafe_allow_html=True)
@@ -57,14 +58,63 @@ def mostrar_app_principal():
     except:
         st.sidebar.markdown("### 🏛️ Universidade de Aveiro")
 
-    st.sidebar.markdown("### ⚙️ Parâmetros do Estudo")
+    st.sidebar.markdown("### ⚙️ Configuração da Pesquisa")
     if st.sidebar.button("🏠 Voltar à Capa"):
         st.session_state['iniciar'] = False
         st.rerun()
     
     st.sidebar.markdown("---")
-    st.sidebar.caption("**Universidade de Aveiro**")
-    st.sidebar.caption("Projeto **TMFC**")
+    
+    # --- INPUTS CLARIFICADOS ---
+    st.sidebar.markdown("**Definição do Intervalo:**")
+    
+    end = st.sidebar.number_input(
+        "Valor da variável 'n':", 
+        min_value=10, 
+        max_value=20000, 
+        value=500, 
+        step=50,
+        help="Aumente este valor para encontrar primos maiores."
+    )
+    
+    limite_real = end * 6
+    st.sidebar.info(f"""
+    ℹ️ **O que isto significa?**
+    A app vai gerar candidatos usando a fórmula $6n \\pm 1$.
+    Ao escolher **n = {end}**, estamos a investigar números até aprox. **{limite_real}**.
+    """)
+
+    # --- CÁLCULO ---
+    if st.sidebar.button("Gerar Padrões ⚡", type="primary"):
+        with st.spinner(f'A calcular primos até {limite_real}...'):
+            primelst = set({2, 3})
+            
+            def is_prime(num):
+                if num < 2: return False
+                for i in range(2, int(num**0.5) + 1):
+                    if num % i == 0:
+                        return False
+                return True
+
+            # GERAÇÃO 6n - 1
+            n = 1
+            while n <= end:
+                num = 6 * n - 1
+                if is_prime(num): primelst.add(num)
+                n += 1
+
+            # GERAÇÃO 6n + 1
+            n = 1    
+            while n <= end:
+                num = 6 * n + 1
+                if is_prime(num): primelst.add(num)
+                n += 1
+            
+            st.session_state['primelstlst'] = sorted(list(primelst))
+            st.session_state['calculou'] = True
+            
+    st.sidebar.markdown("---")
+    st.sidebar.caption("Projeto **TMFC** | Universidade de Aveiro")
     st.sidebar.caption("Autores: Catarina, Diogo, Mateus, Micael")
     st.sidebar.caption("*Com apoio do Gemini*")
 
@@ -75,36 +125,6 @@ def mostrar_app_principal():
         st.session_state['primelstlst'] = []
     if 'calculou' not in st.session_state:
         st.session_state['calculou'] = False
-
-    # --- INPUTS ---
-    end = st.sidebar.number_input("Limite da sequência (n):", min_value=10, max_value=20000, value=500, step=50, help="Define até onde a sequência 6n é calculada.")
-
-    # --- CÁLCULO ---
-    if st.sidebar.button("Gerar Padrões ⚡", type="primary"):
-        with st.spinner('A processar cálculos aritméticos...'):
-            primelst = set({2, 3})
-            
-            def is_prime(num):
-                if num < 2: return False
-                for i in range(2, int(num**0.5) + 1):
-                    if num % i == 0:
-                        return False
-                return True
-
-            n = 1
-            while n <= end:
-                num = 6 * n - 1
-                if is_prime(num): primelst.add(num)
-                n += 1
-
-            n = 1    
-            while n <= end:
-                num = 6 * n + 1
-                if is_prime(num): primelst.add(num)
-                n += 1
-            
-            st.session_state['primelstlst'] = sorted(list(primelst))
-            st.session_state['calculou'] = True
 
     # --- VISUALIZAÇÃO ---
     if st.session_state['calculou']:
@@ -261,9 +281,15 @@ def mostrar_app_principal():
             st.markdown("""
             Projeto desenvolvido para a unidade curricular **TMFC (Teoria Matemática)** na Universidade de Aveiro.
             
-            ### 📐 A Sequência 6n ± 1
-            Todos os números primos ($p > 3$) residem na forma $6n - 1$ ou $6n + 1$.
-            Isto deve-se à aritmética modular: qualquer inteiro $z$ pode ser escrito como $6n + k$. Ao eliminarmos os múltiplos de 2 e 3, restam apenas os resíduos 1 e 5.
+            ### 📐 Porquê 6n ± 1? (E não apenas 6n + 1)
+            Muitas vezes surge a dúvida: *"Porque precisamos do -1? Não basta o +1?"*
+            
+            A resposta é **não**. Se usarmos apenas $6n + 1$, perdemos metade dos números primos.
+            Repara nos vizinhos dos múltiplos de 6:
+            * **6n + 1:** Gera primos como 7, 13, 19, 31...
+            * **6n - 1 (ou 6n + 5):** Gera primos como 5, 11, 17, 23...
+            
+            É obrigatório usar **ambas** as formas para cobrir todos os números primos (exceto o 2 e o 3).
             
             ---
             """)
