@@ -13,7 +13,7 @@ Esta aplicação gera números primos baseados na sequência **6n ± 1** e anali
 st.sidebar.header("Parâmetros")
 end = st.sidebar.number_input("Ordem final da sequência (n):", min_value=10, max_value=5000, value=100, step=10)
 
-if st.sidebar.button("Calcular 🚀"):
+if st.sidebar.button("Calcular"):
     
     with st.spinner('A processar números primos...'):
         # --- LÓGICA DE CÁLCULO ORIGINAL ---
@@ -104,7 +104,7 @@ if st.sidebar.button("Calcular 🚀"):
 
       # 3. O Gráfico (Dispersão: Primos vs Intervalos)
         st.write("---")
-        st.subheader("📈 Distribuição dos Intervalos (Gaps)")
+        st.subheader(" Distribuição dos Intervalos (Gaps)")
         
         if len(primelstlst) > 2:
             # Eixo X = O próprio número primo (até ao valor que o utilizador escolheu)
@@ -142,12 +142,11 @@ if st.sidebar.button("Calcular 🚀"):
 
             st.pyplot(fig)
             
-            st.caption("Nota: Observe as linhas horizontais. A linha do y=6 costuma ser a mais densa!")
-            
         else:
             st.warning("Aumente o valor de n para gerar o gráfico.")
 
 else:
     st.write(" Ajuste o valor de **n** na barra lateral e clique em calcular.")
+
 
 
