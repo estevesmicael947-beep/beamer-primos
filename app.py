@@ -12,25 +12,18 @@ if 'iniciar' not in st.session_state:
     st.session_state['iniciar'] = False
 
 def mostrar_tela_inicial():
-    # Estratégia: Usar colunas para centrar o conteúdo no meio da tela
-    # [1, 2, 1] significa que a coluna do meio é o dobro das laterais (foco central)
-    col_esq, col_centro, col_dir = st.columns([1, 2, 1])
+    col1, col2, col3 = st.columns([1, 2, 1])
     
-    with col_centro:
-        # Espaçamento para empurrar o conteúdo um pouco para baixo
-        st.write("") 
+    with col2:
         st.write("")
         st.write("")
+        
+        # --- LOGO LOCAL ---
+        try:
+            st.image("logo_ua.png", width=150)
+        except:
+            st.write("🏛️ **Universidade de Aveiro**")
 
-        # --- LOGO (Centralizado e Limpo) ---
-        col_img_esq, col_img_centro, col_img_dir = st.columns([1, 1, 1])
-        with col_img_centro:
-            try:
-                st.image("logo_ua.png", width=150) # Tamanho mais discreto
-            except:
-                st.write("🏛️ **Universidade de Aveiro**")
-
-        # --- TÍTULO E SLOGAN ---
         st.markdown("<h1 style='text-align: center; margin-bottom: 0px;'>🧮 Primos e Padrões</h1>", unsafe_allow_html=True)
         st.markdown("<h4 style='text-align: center; color: gray; font-weight: normal;'>A beleza matemática da sequência 6n ± 1</h4>", unsafe_allow_html=True)
         
@@ -38,23 +31,22 @@ def mostrar_tela_inicial():
         st.write("")
         st.write("")
 
-        # --- BOTÃO DE AÇÃO (O Hero da página) ---
-        # Colocamos colunas dentro da coluna central para o botão não ficar esticado
+        # --- BOTÃO DE AÇÃO ---
         c1, c2, c3 = st.columns([1, 2, 1]) 
         with c2:
             if st.button("Iniciar Investigação ⚡", type="primary", use_container_width=True):
                 st.session_state['iniciar'] = True
                 st.rerun()
 
-        # --- CRÉDITOS (Rodapé Discreto) ---
-        st.write("")
+        # --- CRÉDITOS ---
         st.write("")
         st.write("")
         st.write("")
         st.markdown("""
         <div style='text-align: center; color: #b0b0b0; font-size: 12px;'>
         Projeto <b>TMFC</b> | Universidade de Aveiro<br>
-        Catarina Mendes • Diogo Maria • Mateus Carmo • Micael Esteves
+        Catarina Mendes • Diogo Maria • Mateus Carmo • Micael Esteves<br>
+        <i>Desenvolvido com apoio do Gemini (AI)</i>
         </div>
         """, unsafe_allow_html=True)
 
@@ -74,6 +66,7 @@ def mostrar_app_principal():
     st.sidebar.caption("**Universidade de Aveiro**")
     st.sidebar.caption("Projeto **TMFC**")
     st.sidebar.caption("Autores: Catarina, Diogo, Mateus, Micael")
+    st.sidebar.caption("*Com apoio do Gemini*")
 
     st.title("🧮 Análise de Padrões em Números Primos")
     
@@ -91,7 +84,6 @@ def mostrar_app_principal():
         with st.spinner('A processar cálculos aritméticos...'):
             primelst = set({2, 3})
             
-            # Função de verificação otimizada
             def is_prime(num):
                 if num < 2: return False
                 for i in range(2, int(num**0.5) + 1):
@@ -99,14 +91,12 @@ def mostrar_app_principal():
                         return False
                 return True
 
-            # Sequência 6n - 1
             n = 1
             while n <= end:
                 num = 6 * n - 1
                 if is_prime(num): primelst.add(num)
                 n += 1
 
-            # Sequência 6n + 1
             n = 1    
             while n <= end:
                 num = 6 * n + 1
@@ -120,7 +110,6 @@ def mostrar_app_principal():
     if st.session_state['calculou']:
         primelstlst = st.session_state['primelstlst']
         
-        # Dicionário de Intervalos
         todos_intervalos = {}
         for x in range(len(primelstlst)-1):
             diff = primelstlst[x+1] - primelstlst[x]
@@ -128,26 +117,22 @@ def mostrar_app_principal():
             if diff not in todos_intervalos: todos_intervalos[diff] = []
             todos_intervalos[diff].append(pair)
 
-        # Dados para as métricas
         twins = todos_intervalos.get(2, [])
         fours = todos_intervalos.get(4, [])
         sixes = todos_intervalos.get(6, [])
         eights = todos_intervalos.get(8, [])
         tens = todos_intervalos.get(10, [])
 
-        # Preparar dados do gráfico (Intervalos)
         y_values = [primelstlst[i+1] - primelstlst[i] for i in range(len(primelstlst)-1)]
         x_values = primelstlst[:-1]
 
-        # --- LÓGICA INTELIGENTE ---
         dominio_do_6 = (len(sixes) > len(twins)) and (len(sixes) > len(fours))
 
-        # --- CRIAÇÃO DAS ABAS TEMÁTICAS ---
+        # --- ABAS ---
         tab_dash, tab_expl, tab_sobre = st.tabs(["📉 Análise Visual", "🔬 Laboratório de Dados", "🎓 Teoria Matemática"])
 
         # === TAB 1: PAINEL DE ANÁLISE ===
         with tab_dash:
-            # 1. Métricas Principais
             st.markdown("### 📊 Indicadores Globais")
             kpi1, kpi2, kpi3 = st.columns(3)
             with kpi1: st.metric("🔢 Primos Identificados", len(primelstlst), border=True)
@@ -165,7 +150,6 @@ def mostrar_app_principal():
             st.write("---")
 
             if len(primelstlst) > 2:
-                # 2. Gráfico de Dispersão
                 st.subheader("📍 Dispersão dos Primos")
                 st.info("""
                 **Legenda do Gráfico:**
@@ -203,7 +187,6 @@ def mostrar_app_principal():
                 ax.set_xlim(0, max(x_values))
                 st.pyplot(fig)
 
-                # 3. Histograma de Frequências
                 st.write("---")
                 st.subheader("📊 Histograma de Frequências")
                 st.markdown("Comparação da quantidade de vezes que cada intervalo ocorre.")
@@ -211,7 +194,6 @@ def mostrar_app_principal():
                 gap_counts = Counter(y_values)
                 sorted_gaps = sorted(gap_counts.keys())
                 
-                # Filtra os dados conforme o zoom
                 filtered_gaps = [g for g in sorted_gaps if g <= max_y_zoom]
                 filtered_counts = [gap_counts[g] for g in filtered_gaps]
                 x_labels = [str(g) for g in filtered_gaps]
@@ -239,7 +221,6 @@ def mostrar_app_principal():
                         **O intervalo 6 é o mais frequente.**
                         Isto não é coincidência. Consulte a aba **'🎓 Teoria Matemática'** para entender por que razão o 6 "vence" o 2 e o 4.
                         """)
-
 
         # === TAB 2: EXPLORADOR ===
         with tab_expl:
@@ -287,7 +268,6 @@ def mostrar_app_principal():
             ---
             """)
 
-            # --- EXPLICAÇÃO LÚCIDA ---
             if dominio_do_6:
                 with st.container(border=True):
                     st.markdown("""
@@ -296,9 +276,11 @@ def mostrar_app_principal():
 
                     Para um número ser Primo, ele tem de passar dois "filtros": **não ser divisível por 2** e **não ser divisível por 3**.
                     """)
+                    
                     st.markdown("""
                     
                     """)
+
                     st.markdown("""
                     * **O Número 6:** É o produto perfeito destes filtros ($2 \\times 3 = 6$).
                     * **A "Segurança" do 6:** Ao somarmos 6 a um número primo, **mantemos as propriedades** de resto dele. Se ele já passou nos filtros do 2 e do 3, o novo número também passará (ao contrário de somar 2 ou 4, que pode criar um múltiplo de 3).
@@ -313,7 +295,7 @@ def mostrar_app_principal():
             * **Primos Sexy:** $p, p+6$ (ex: 5, 11) - o nome vem do latim *sex* (seis).
             """)
             st.write("---")
-            st.caption("Investigação realizada por: Catarina Mendes, Diogo Maria, Mateus Carmo e Micael Esteves.")
+            st.caption("Investigação realizada por: Catarina Mendes, Diogo Maria, Mateus Carmo e Micael Esteves | Com apoio do Gemini.")
 
     else:
         st.info("👈 Defina o valor de **n** na barra lateral e clique em **Gerar Padrões** para iniciar.")
