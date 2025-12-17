@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from collections import Counter
-from matplotlib.ticker import MaxNLocator  # Para corrigir os decimais
+from matplotlib.ticker import MaxNLocator
 
 # --- Configuração da Página ---
 st.set_page_config(page_title="Primos e Padrões", layout="wide", page_icon="🧮")
@@ -205,7 +205,6 @@ def mostrar_app_principal():
                 ax.grid(True, axis='y', linestyle='-', linewidth=0.5, alpha=0.3, color='gray')
                 ax.set_xlabel("Número Primo ($p$)", fontsize=11)
                 ax.set_ylabel("Distância ao próximo primo (Intervalo)", fontsize=11)
-                
                 ax.set_title(f"Dispersão dos Intervalos entre Primos (Zoom até {max_y_zoom})", fontsize=13)
                 
                 ax.set_xlim(0, max(x_values))
@@ -223,17 +222,12 @@ def mostrar_app_principal():
                 x_labels = [str(g) for g in filtered_gaps]
 
                 fig2, ax2 = plt.subplots(figsize=(12, 4))
-                
-                # --- ALTERAÇÃO AQUI: Removida a lógica de cor magenta ---
-                # Todas as barras usam agora a cor padrão '#4e79a7'
+                # Cor única para o histograma
                 bars = ax2.bar(x_labels, filtered_counts, color='#4e79a7', edgecolor='black', alpha=0.8, width=0.6)
                 
                 ax2.yaxis.set_major_locator(MaxNLocator(integer=True))
-                
                 ax2.set_xlabel("Tipo de Intervalo")
                 ax2.set_ylabel("Frequência")
-                
-                # --- ALTERAÇÃO AQUI: Título simplificado ---
                 ax2.set_title("Dominância dos Intervalos")
                 ax2.grid(axis='y', linestyle='--', alpha=0.5)
                 
@@ -289,12 +283,6 @@ def mostrar_app_principal():
             Usamos $6n-1$ e $6n+1$ para garantir que cobrimos todos os primos possíveis (exceto 2 e 3).
             
             ---
-            
-            ### 🎢 A Oscilação dos Intervalos
-            Como observaste nos teus resultados (ex: **Intervalo 10 mais comum que o 8**), a distribuição não é uma linha a descer suave.
-            * Os intervalos tendem a ser mais frequentes se forem **múltiplos de 6** (6, 12, 18, 24...).
-            * Intervalos como 8 ou 10, que não são divisíveis por 3, são menos favorecidos.
-            * Em escalas pequenas, a diferença entre 8 e 10 pode dever-se a flutuações estatísticas locais, contrariando a ideia de que "maior é sempre mais raro".
             """)
 
             if dominio_do_6:
