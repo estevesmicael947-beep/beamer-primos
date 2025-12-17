@@ -207,7 +207,7 @@ def mostrar_app_principal():
                 ax.set_xlim(0, max(x_values))
                 st.pyplot(fig)
 
-                # 3. Histograma de Frequências (CORRIGIDO)
+                # 3. Histograma de Frequências (AGORA COM ESPAÇAMENTO IGUAL)
                 st.write("---")
                 st.subheader("📊 Frequência dos Intervalos")
                 st.markdown("Este gráfico mostra **quais intervalos aparecem mais vezes**.")
@@ -215,18 +215,23 @@ def mostrar_app_principal():
                 gap_counts = Counter(y_values)
                 sorted_gaps = sorted(gap_counts.keys())
                 
+                # Filtra os dados conforme o zoom
                 filtered_gaps = [g for g in sorted_gaps if g <= max_y_zoom]
                 filtered_counts = [gap_counts[g] for g in filtered_gaps]
 
+                # --- TRUQUE PARA ESPAÇAMENTO IGUAL: Converter números para Texto (Categorias) ---
+                x_labels = [str(g) for g in filtered_gaps]
+
                 fig2, ax2 = plt.subplots(figsize=(12, 4))
                 
-                # --- CORREÇÃO AQUI: WIDTH 0.8 PARA EVITAR SOBREPOSIÇÃO ---
-                bars = ax2.bar(filtered_gaps, filtered_counts, color='#4e79a7', edgecolor='black', alpha=0.7, width=0.8)
+                # Passamos x_labels (texto) em vez de filtered_gaps (números)
+                bars = ax2.bar(x_labels, filtered_counts, color='#4e79a7', edgecolor='black', alpha=0.7, width=0.6)
                 
                 ax2.set_xlabel("Tamanho do Intervalo (Gap)")
                 ax2.set_ylabel("Quantidade Encontrada")
-                ax2.set_title("Histograma de Frequência dos Intervalos")
-                ax2.set_xticks(filtered_gaps)
+                ax2.set_title("Histograma de Frequência dos Intervalos (Por Categoria)")
+                
+                # Grid apenas no eixo Y para ficar limpo
                 ax2.grid(axis='y', linestyle='--', alpha=0.5)
                 
                 for bar in bars:
@@ -326,4 +331,3 @@ if st.session_state['iniciar']:
     mostrar_app_principal()
 else:
     mostrar_tela_inicial()
-
