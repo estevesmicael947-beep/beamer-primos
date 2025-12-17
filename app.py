@@ -224,7 +224,6 @@ def mostrar_app_principal():
 
                 fig2, ax2 = plt.subplots(figsize=(12, 4))
                 
-                # Histograma com cor única (Azul)
                 bars = ax2.bar(x_labels, filtered_counts, color='#4e79a7', edgecolor='black', alpha=0.8, width=0.6)
                 
                 ax2.yaxis.set_major_locator(MaxNLocator(integer=True))
@@ -265,8 +264,18 @@ def mostrar_app_principal():
                     
                     st.markdown("---")
                     st.markdown("### 2. Exportação")
-                    csv_data = pd.DataFrame(primelstlst, columns=["Números Primos"]).to_csv(index=False).encode('utf-8')
-                    st.download_button("💾 Exportar Conjunto de Dados (CSV)", csv_data, 'dataset_primos.csv', 'text/csv', type='primary')
+                    
+                    # --- ATUALIZAÇÃO DA EXPORTAÇÃO ---
+                    # Criar um DataFrame com 3 colunas para ser útil
+                    df_export = pd.DataFrame({
+                        "Primo Atual": primelstlst[:-1],
+                        "Próximo Primo": primelstlst[1:],
+                        "Intervalo (Gap)": y_values
+                    })
+                    
+                    csv_data = df_export.to_csv(index=False).encode('utf-8')
+                    
+                    st.download_button("💾 Exportar Conjunto de Dados (CSV)", csv_data, 'dataset_primos_completo.csv', 'text/csv', type='primary')
 
             with col_right:
                 st.markdown(f"### 📋 Resultados: Intervalo {gap_escolhido}")
@@ -278,7 +287,6 @@ def mostrar_app_principal():
         # === TAB 3: SOBRE ===
         with tab_sobre:
             st.header("🎓 Contexto Teórico")
-            # --- CORREÇÃO DO NOME DA DISCIPLINA AQUI ---
             st.markdown("""
             Projeto desenvolvido para a unidade curricular **TMFC (Tópicos Matemáticos e Ferramentas Computacionais)** na Universidade de Aveiro.
             
