@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from collections import Counter
+from matplotlib.ticker import MaxNLocator  # Importação nova para corrigir os decimais
 
 # --- Configuração da Página ---
 st.set_page_config(page_title="Primos e Padrões", layout="wide", page_icon="🧮")
@@ -171,7 +172,6 @@ def mostrar_app_principal():
             if len(primelstlst) > 2:
                 st.subheader("📍 Dispersão dos Primos")
                 
-                # --- LEGENDA ATUALIZADA (CORRIGIDA) ---
                 st.info("""
                 **Legenda do Gráfico:**
                 * **Eixo X:** Posição do primo. | **Eixo Y:** Distância ao próximo.
@@ -185,8 +185,6 @@ def mostrar_app_principal():
                 
                 x_arr = np.array(x_values)
                 y_arr = np.array(y_values)
-                
-                # Filtro para encontrar onde o gap é 1
                 mask_1 = (y_arr == 1)
                 
                 x_others = x_arr[~mask_1]
@@ -208,16 +206,16 @@ def mostrar_app_principal():
                     linewidth=0.4
                 )
                 
-                # 2. Plotar o "Único" (Gap 1) - Agora como Círculo Magenta
+                # 2. Plotar o "Único" (Gap 1)
                 if len(x_unique) > 0:
                     ax.scatter(
                         x_unique, 
                         y_unique, 
-                        s=80,               # Um pouco maior para destaque
-                        c='#D500F9',        # Magenta Vibrante
-                        marker='o',         # Círculo (consistente)
+                        s=80,               
+                        c='#D500F9',        
+                        marker='o',         
                         edgecolors='black', 
-                        linewidth=1.0,      # Borda mais grossa
+                        linewidth=1.0,      
                         label='Gap Único (1)'
                     )
                 
@@ -247,10 +245,12 @@ def mostrar_app_principal():
 
                 fig2, ax2 = plt.subplots(figsize=(12, 4))
                 
-                # Cor Magenta para o 1, Azul padrão para os outros
                 colors = ['#D500F9' if g == '1' else '#4e79a7' for g in x_labels]
                 
                 bars = ax2.bar(x_labels, filtered_counts, color=colors, edgecolor='black', alpha=0.8, width=0.6)
+                
+                # --- CORREÇÃO DO EIXO Y (Números Inteiros) ---
+                ax2.yaxis.set_major_locator(MaxNLocator(integer=True))
                 
                 ax2.set_xlabel("Tipo de Intervalo")
                 ax2.set_ylabel("Frequência")
@@ -360,4 +360,5 @@ if st.session_state['iniciar']:
     mostrar_app_principal()
 else:
     mostrar_tela_inicial()
+
 
