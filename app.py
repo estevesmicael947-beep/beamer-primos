@@ -265,23 +265,18 @@ def mostrar_app_principal():
                     st.markdown("---")
                     st.markdown("### 2. Exportação")
                     
-                    # --- NOVA LÓGICA DE EXPORTAÇÃO ORGANIZADA ---
-                    # 1. Criar dicionário onde cada Chave é "Gap X" e valor é lista de strings "p1 - p2"
+                    # --- CORREÇÃO DA DATA: USAR PARÊNTESIS ---
                     export_dict = {}
                     
                     for gap in gaps_disponiveis:
                         col_name = f"Intervalo {gap}"
-                        pares_formatados = [f"{p[0]} - {p[1]}" for p in todos_intervalos[gap]]
+                        # AQUI ESTÁ A MUDANÇA: Usamos (p1, p2) em vez de p1 - p2
+                        pares_formatados = [f"({p[0]}, {p[1]})" for p in todos_intervalos[gap]]
                         export_dict[col_name] = pares_formatados
                     
-                    # 2. Converter para DataFrame (preenche automaticamente colunas menores com NaN)
-                    # dict orient='index' e transpose é um truque para alinhar colunas de tamanhos diferentes
                     df_export = pd.DataFrame(dict([(k, pd.Series(v)) for k, v in export_dict.items()]))
-                    
-                    # 3. Limpar os NaN (ficar células vazias)
                     df_export = df_export.fillna("")
                     
-                    # 4. Exportar com separador ponto e vírgula (ideal para Excel PT)
                     csv_data = df_export.to_csv(index=False, sep=';').encode('utf-8-sig')
                     
                     st.download_button(
