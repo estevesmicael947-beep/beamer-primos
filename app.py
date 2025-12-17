@@ -102,56 +102,50 @@ if st.sidebar.button("Calcular"):
             with st.expander("Ver lista completa de Primos"):
                 st.write(primelstlst)
 
-      # 3. O Gráfico (Dispersão: Eixo Y Ajustado Dinamicamente)
+    # 3. O Gráfico (Gráfico de Barras - Comparação de Quantidades)
         st.write("---")
-        st.subheader("📈 Distribuição dos Intervalos (Gaps)")
+        st.subheader("📊 Comparação: Qual é o padrão mais comum?")
         
         if len(primelstlst) > 2:
-            import numpy as np # Necessário para o eixo Y funcionar bem
             
-            # Dados X e Y
-            x_values = primelstlst[:-1] 
-            y_values = [primelstlst[i+1] - primelstlst[i] for i in range(len(primelstlst)-1)]
-            
-            # Descobrir qual é o gap máximo real (pode ser 10, 12, 14...)
-            max_gap_encontrado = max(y_values) if len(y_values) > 0 else 10
+            # Preparar os dados para o gráfico de barras
+            categorias = ['Gémeos (Diff 2)', 'Diff 4', 'Diff 6', 'Diff 8', 'Diff 10']
+            quantidades = [len(twins), len(fours), len(sixes), len(eights), len(tens)]
             
             # Criar o gráfico
-            fig, ax = plt.subplots(figsize=(12, 6))
+            fig, ax = plt.subplots(figsize=(10, 5))
             
-            # Pontos
-            ax.scatter(x_values, y_values, s=20, c='#3366cc', marker='o', alpha=0.6)
+            # Criar as barras com cores diferentes para cada categoria
+            cores = ['#ff4b4b', '#1f77b4', '#2ca02c', '#ff7f0e', '#9467bd']
+            barras = ax.bar(categorias, quantidades, color=cores, alpha=0.8)
             
-            # --- EIXO Y PERFEITO ---
-            # Cria ticks de 2 em 2, começando no 2 e indo EXATAMENTE até ao máximo encontrado
-            # O +1 no range serve para garantir que o último número é incluído
-            yticks = np.arange(2, max_gap_encontrado + 2, 2)
-            ax.set_yticks(yticks)
-            ax.set_ylim(0, max_gap_encontrado + 2) # Dá uma margem visual pequena em cima
+            # Títulos e Eixos
+            ax.set_ylabel("Quantidade Encontrada", fontsize=12)
+            ax.set_title(f"Frequência dos Diferentes Tipos de Primos (n={end})", fontsize=14)
             
-            # Labels e Títulos
-            ax.set_xlabel("Número Primo ($p$)", fontsize=12)
-            ax.set_ylabel("Intervalo ($p_{next} - p$)", fontsize=12)
-            ax.set_title(f"Distribuição dos Intervalos até n={end}", fontsize=14)
+            # Remover linhas desnecessárias para limpar o visual
+            ax.spines['top'].set_visible(False)
+            ax.spines['right'].set_visible(False)
+            ax.grid(axis='y', linestyle='--', alpha=0.3)
             
-            # Grelha horizontal para facilitar a leitura das linhas
-            ax.grid(True, axis='y', linestyle='-', alpha=0.3)
-            
-            # Ajuste do eixo X
-            ax.set_xlim(0, end)
+            # --- O TRUQUE PARA SER FÁCIL DE LER ---
+            # Escrever o número exato em cima de cada barra
+            for barra in barras:
+                height = barra.get_height()
+                ax.annotate(f'{height}',
+                            xy=(barra.get_x() + barra.get_width() / 2, height),
+                            xytext=(0, 3),  # 3 points vertical offset
+                            textcoords="offset points",
+                            ha='center', va='bottom', fontweight='bold')
 
             st.pyplot(fig)
-            
-            st.caption(f"Nota: O gráfico mostra intervalos até {max_gap_encontrado}. Se vires pontos acima do 10, são gaps maiores que a tua lista inicial não apanhava!")
-            
-        else:
-            st.warning("Aumente o valor de n para gerar o gráfico.")
             
         else:
             st.warning("Aumente o valor de n para gerar o gráfico.")
 
 else:
     st.write(" Ajuste o valor de **n** na barra lateral e clique em calcular.")
+
 
 
 
