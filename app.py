@@ -103,21 +103,43 @@ if st.sidebar.button("Calcular"):
             with st.expander("Ver lista completa de Primos"):
                 st.write(primelstlst)
 
-        # 3. O Gráfico (A parte que estava comentada)
-        if len(twins) > 1:
-            st.write("---")
-            st.subheader("Distância entre pares de Primos Gémeos")
+      # 3. O Gráfico (Pontos com Eixos Identificados)
+        st.write("---")
+        st.subheader("📈 Visualização dos Intervalos (Gaps)")
+        
+        if len(primelstlst) > 2:
+            # Preparar dados
+            x_values = primelstlst[:-1] 
+            y_values = [primelstlst[i+1] - primelstlst[i] for i in range(len(primelstlst)-1)]
             
-            # Tua lógica de gráfico
-            twingap = [twins[x+1][0] - twins[x][0] for x in range(len(twins)-1)]
-            x_axis = [x[0] for x in twins[:-1]]
+            fig, ax = plt.subplots(figsize=(10, 5))
             
-            fig, ax = plt.subplots(figsize=(10, 4))
-            ax.plot(x_axis, twingap, marker='o', linestyle='-', color='b', markersize=3, alpha=0.6)
-            ax.set_title("Variação da distância entre primos gémeos consecutivos")
-            ax.set_xlabel("Valor do Primo")
-            ax.set_ylabel("Distância (Gap)")
-            ax.grid(True, linestyle='--', alpha=0.5)
+            # Desenhar apenas os pontos (Pretos, tamanho 15)
+            ax.scatter(x_values, y_values, s=15, c='black', marker='o', alpha=0.6)
+            
+            # --- IDENTIFICAÇÃO DOS EIXOS ---
+            
+            # Eixo X: Os números primos
+            ax.set_xlabel("Número Primo ($p_n$)", fontsize=12, fontweight='bold')
+            
+            # Eixo Y: O tamanho do intervalo (Gap)
+            ax.set_ylabel("Tamanho do Intervalo ($p_{n+1} - p_n$)", fontsize=12, fontweight='bold')
+            
+            # Título do Gráfico
+            ax.set_title(f"Distribuição dos Gaps (até n={end})", fontsize=14)
+            
+            # --- AJUSTE DA ESCALA DO EIXO Y ---
+            # Força o eixo Y a mostrar apenas números pares (2, 4, 6, 8...)
+            max_gap = max(y_values) if len(y_values) > 0 else 10
+            ax.set_yticks(range(0, max_gap + 4, 2))
+            
+            # Adiciona uma grelha horizontal fina para ajudar a ler o valor do eixo Y
+            ax.grid(True, axis='y', linestyle='--', alpha=0.5)
+
+            st.pyplot(fig)
+            
+        else:
+            st.warning("Aumente o valor de n para gerar o gráfico.")
             
             # Comando do Streamlit para mostrar o gráfico
             st.pyplot(fig)
@@ -125,4 +147,5 @@ if st.sidebar.button("Calcular"):
             st.warning("Não há dados suficientes de primos gémeos para gerar o gráfico. Aumente o valor de n.")
 
 else:
+
     st.write("Ajuste o valor de **n** na barra lateral e clique em calcular.")
