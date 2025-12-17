@@ -2,7 +2,7 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from collections import Counter # Para contar a frequência dos gaps
+from collections import Counter
 
 # --- Configuração da Página ---
 st.set_page_config(page_title="Primos e Padrões", layout="wide")
@@ -32,10 +32,11 @@ def mostrar_tela_inicial():
         <div style='text-align: center; font-size: 18px;'>
         Esta aplicação foi desenhada para explorar a beleza oculta dos números primos.
         <br><br>
-        <b>Novidades da Versão Pro:</b><br>
-        📊 Histograma de Frequências<br>
-        💾 Exportação de Dados para Excel/CSV<br>
-        🎨 Visualização Avançada
+        <b>Funcionalidades:</b><br>
+        ✨ Geração de sequências <b>6n ± 1</b><br>
+        📊 Histograma de Frequências (Novo)<br>
+        🔭 Gráficos com coloração dinâmica<br>
+        💾 Exportação de Dados
         </div>
         """, unsafe_allow_html=True)
         
@@ -203,18 +204,14 @@ def mostrar_app_principal():
                 ax.set_xlim(0, max(x_values))
                 st.pyplot(fig)
 
-                # 3. NOVO: Histograma de Frequências
+                # 3. Histograma de Frequências
                 st.write("---")
                 st.subheader("📊 Frequência dos Intervalos")
                 st.markdown("Este gráfico mostra **quais intervalos aparecem mais vezes**. Nota como os múltiplos de 6 são dominantes.")
                 
-                # Contar a frequência de cada gap
                 gap_counts = Counter(y_values)
-                # Ordenar pelo tamanho do gap (eixo X)
                 sorted_gaps = sorted(gap_counts.keys())
-                sorted_counts = [gap_counts[gap] for gap in sorted_gaps]
                 
-                # Filtrar apenas gaps até ao zoom atual para o gráfico ficar legível
                 filtered_gaps = [g for g in sorted_gaps if g <= max_y_zoom]
                 filtered_counts = [gap_counts[g] for g in filtered_gaps]
 
@@ -227,7 +224,6 @@ def mostrar_app_principal():
                 ax2.set_xticks(filtered_gaps)
                 ax2.grid(axis='y', linestyle='--', alpha=0.5)
                 
-                # Adicionar os números em cima das barras
                 for bar in bars:
                     height = bar.get_height()
                     ax2.text(bar.get_x() + bar.get_width()/2., height,
@@ -255,7 +251,6 @@ def mostrar_app_principal():
                     
                     st.markdown("---")
                     st.markdown("### 2. Exportar")
-                    # Botão de Download (Feature Pro)
                     csv_data = pd.DataFrame(primelstlst, columns=["Números Primos"]).to_csv(index=False).encode('utf-8')
                     st.download_button(
                         label="💾 Baixar Lista de Primos (CSV)",
@@ -286,6 +281,19 @@ def mostrar_app_principal():
             * Se $k = 3$, o número é divisível por 3.
             * Logo, restam apenas as opções **$k=1$** e **$k=5$** (que equivale a $-1$).
             
+            ---
+            ### 🌟 Porquê tantos primos com intervalo de 6?
+            Observamos no histograma que o intervalo **6** é extremamente comum (mais que 2 ou 4). Isto é explicado matematicamente:
+            
+            1.  **Divisibilidade:** O número 6 é o produto dos dois primeiros primos ($2 \\times 3$).
+            2.  **O "Filtro" dos Primos:** Para um número ser primo, não pode ser divisível por 2 nem por 3.
+            3.  **A vantagem do 6:** * Se tivermos um primo $p$ (que não é divisível por 2 nem por 3), então $p+6$ mantém as mesmas propriedades de resto. 
+                * Ou seja, somar 6 **não altera a paridade nem a divisibilidade por 3**.
+                * Somar 2 ou 4 pode facilmente fazer cair num múltiplo de 3, eliminando a possibilidade de ser primo.
+            
+            Por isso, é "mais fácil" encontrar pares separados por 6 (Primos Sexy) do que por outros números pequenos.
+            
+            ---
             ### Glossário de Intervalos
             * **Primos Gémeos:** Diferença de 2 (ex: 11, 13).
             * **Primos Primos:** Diferença de 4 (ex: 7, 11).
