@@ -229,7 +229,7 @@ def mostrar_app_principal():
                 
                 ax2.set_xlabel("Tamanho do Intervalo (Gap)")
                 ax2.set_ylabel("Quantidade Encontrada")
-                ax2.set_title("Histograma de Frequência dos Intervalos (Por Categoria)")
+                ax2.set_title("Histograma de Frequência dos Intervalos")
                 
                 # Grid apenas no eixo Y para ficar limpo
                 ax2.grid(axis='y', linestyle='--', alpha=0.5)
@@ -331,3 +331,4 @@ if st.session_state['iniciar']:
     mostrar_app_principal()
 else:
     mostrar_tela_inicial()
+
