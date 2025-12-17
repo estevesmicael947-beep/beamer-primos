@@ -102,9 +102,9 @@ if st.sidebar.button("Calcular"):
             with st.expander("Ver lista completa de Primos"):
                 st.write(primelstlst)
 
-  # 3. O Gráfico (Estilo "Pontinhos" / Scatter Plot)
+# 3. O Gráfico (Com Zoom no Eixo Y)
         st.write("---")
-        st.subheader("📈 Distribuição dos Intervalos (Scatter Plot)")
+        st.subheader("📈 Distribuição dos Intervalos (Com Zoom)")
         
         if len(primelstlst) > 2:
             import numpy as np
@@ -112,46 +112,41 @@ if st.sidebar.button("Calcular"):
             # Dados
             x_values = primelstlst[:-1] 
             y_values = [primelstlst[i+1] - primelstlst[i] for i in range(len(primelstlst)-1)]
-            max_gap = max(y_values) if len(y_values) > 0 else 10
+            
+            # --- CONTROLO DE ZOOM (NOVIDADE) ---
+            # Adicionei isto para resolver o problema do Y ficar muito grande
+            # Por defeito limita a 20, mas podes aumentar se quiseres
+            max_y_zoom = st.slider("Altura Máxima do Eixo Y (Zoom):", min_value=10, max_value=100, value=20, step=2)
             
             # Criar a figura
             fig, ax = plt.subplots(figsize=(12, 6))
             
-            # --- OS PONTINHOS ---
-            # s=10: Tamanho pequeno para parecerem "pontinhos"
-            # c='black': Cor preta para alto contraste
-            # alpha=0.5: Transparência (se muitos pontos ficarem uns em cima dos outros, fica mais escuro)
-            # marker='o': Formato de bolinha
-            ax.scatter(x_values, y_values, s=10, c='black', marker='o', alpha=0.5)
+            # Pontinhos pretos
+            ax.scatter(x_values, y_values, s=15, c='black', marker='.', alpha=0.5)
             
-            # --- EIXO Y (Intervalos: 2, 4, 6...) ---
-            # Cria a escala apenas com números pares
-            ticks_y = np.arange(2, max_gap + 2, 2)
+            # --- EIXO Y CONTROLADO ---
+            # Agora o eixo Y só vai até onde o slider mandar
+            ticks_y = np.arange(2, max_y_zoom + 2, 2)
             ax.set_yticks(ticks_y)
-            ax.set_ylim(0, max_gap + 2) # Margem ligeira
+            ax.set_ylim(0, max_y_zoom + 1)
             
-            # --- VISUALIZAÇÃO ---
-            # Grelha horizontal fina para guiar o olhar nas linhas 2, 4, 6...
+            # Visualização
             ax.grid(True, axis='y', linestyle='-', linewidth=0.5, alpha=0.3, color='gray')
-            
-            # Labels (Títulos dos Eixos)
             ax.set_xlabel("Número Primo ($p$)", fontsize=11)
             ax.set_ylabel("Tamanho do Intervalo (Gap)", fontsize=11)
-            ax.set_title(f"Padrão dos Intervalos entre Primos (até {end})", fontsize=13)
-            
-            # Ajustar limite X para coincidir com o input do utilizador
+            ax.set_title(f"Padrão dos Intervalos (Focando nos gaps até {max_y_zoom})", fontsize=13)
             ax.set_xlim(0, end)
 
-            # Mostrar gráfico
             st.pyplot(fig)
             
-            st.caption("Cada ponto preto representa um intervalo entre dois primos consecutivos.")
+            st.caption("Usa o slider 'Altura Máxima' para cortar os intervalos gigantes e ver melhor as linhas de baixo.")
             
         else:
             st.warning("Aumente o valor de n para gerar o gráfico.")
 
 else:
     st.write(" Ajuste o valor de **n** na barra lateral e clique em calcular.")
+
 
 
 
