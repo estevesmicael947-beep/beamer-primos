@@ -102,29 +102,52 @@ if st.sidebar.button("Calcular 🚀"):
             with st.expander("Ver lista completa de Primos"):
                 st.write(primelstlst)
 
-        # 3. O Gráfico (Versão Original - Linha Conectada)
-        if len(twins) > 1:
-            st.write("---")
-            st.subheader(" Distância entre pares de Primos Gémeos")
+      # 3. O Gráfico (Dispersão: Primos vs Intervalos)
+        st.write("---")
+        st.subheader("📈 Distribuição dos Intervalos (Gaps)")
+        
+        if len(primelstlst) > 2:
+            # Eixo X = O próprio número primo (até ao valor que o utilizador escolheu)
+            x_values = primelstlst[:-1] 
             
-            # Cálculo original do gráfico
-            twingap = [twins[x+1][0] - twins[x][0] for x in range(len(twins)-1)]
-            x_axis = [x[0] for x in twins[:-1]]
+            # Eixo Y = A diferença para o próximo primo (2, 4, 6...)
+            y_values = [primelstlst[i+1] - primelstlst[i] for i in range(len(primelstlst)-1)]
             
-            fig, ax = plt.subplots(figsize=(10, 4))
+            # Criar o gráfico largo para se ver bem a linha temporal
+            fig, ax = plt.subplots(figsize=(12, 6))
             
-            # Plot original: Linha azul com marcadores
-            ax.plot(x_axis, twingap, marker='o', linestyle='-', color='b', markersize=3, alpha=0.6)
+            # DESENHAR OS PONTOS
+            # s=10 -> Pontos pequenos para não encavalitar
+            # alpha=0.5 -> Transparência (se houver muitos pontos juntos, fica mais escuro)
+            # c='#3366cc' -> Um azul profissional
+            ax.scatter(x_values, y_values, s=15, c='#3366cc', marker='o', alpha=0.6)
             
-            ax.set_title("Variação da distância entre primos gémeos consecutivos")
-            ax.set_xlabel("Valor do Primo")
-            ax.set_ylabel("Distância (Gap)")
-            ax.grid(True, linestyle='--', alpha=0.5)
+            # --- O SEGREDO PARA FICAR COMO QUERES ---
+            # Forçar o eixo Y a mostrar apenas números pares (0, 2, 4, 6, 8...)
+            max_gap = max(y_values) if len(y_values) > 0 else 10
+            import numpy as np
+            # Cria ticks de 2 em 2 até ao máximo encontrado
+            ax.set_yticks(np.arange(0, max_gap + 4, 2))
             
+            # Labels e Títulos
+            ax.set_xlabel("Número Primo (Valor x)", fontsize=12)
+            ax.set_ylabel("Tamanho do Intervalo (Gap)", fontsize=12)
+            ax.set_title(f"Visualização dos Gaps para primos até {end}", fontsize=14)
+            
+            # Grelha horizontal forte para guiar o olho nas linhas 2, 4, 6...
+            ax.grid(True, axis='y', linestyle='-', alpha=0.3, color='gray')
+            
+            # Limites do eixo X para colar com o input do utilizador
+            ax.set_xlim(0, end)
+
             st.pyplot(fig)
+            
+            st.caption("Nota: Observe as linhas horizontais. A linha do y=6 costuma ser a mais densa!")
+            
         else:
-            st.warning("Não há dados suficientes de primos gémeos para gerar o gráfico. Aumente o valor de n.")
+            st.warning("Aumente o valor de n para gerar o gráfico.")
 
 else:
     st.write(" Ajuste o valor de **n** na barra lateral e clique em calcular.")
+
 
