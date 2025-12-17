@@ -285,16 +285,8 @@ def mostrar_app_principal():
             
             ### 📐 Porquê 6n ± 1?
             Usamos $6n-1$ e $6n+1$ para garantir que cobrimos todos os primos possíveis (exceto 2 e 3).
-            
-            ---
-            
-            ### 🎢 A Oscilação dos Intervalos
-            Como observaste nos teus resultados (ex: **Intervalo 10 mais comum que o 8**), a distribuição não é uma linha a descer suave.
-            * Os intervalos tendem a ser mais frequentes se forem **múltiplos de 6** (6, 12, 18, 24...).
-            * Intervalos como 8 ou 10, que não são divisíveis por 3, são menos favorecidos.
-            * Em escalas pequenas, a diferença entre 8 e 10 pode dever-se a flutuações estatísticas locais, contrariando a ideia de que "maior é sempre mais raro".
-            """)
-
+                ---
+        
             if dominio_do_6:
                 with st.container(border=True):
                     st.markdown("""
@@ -319,4 +311,5 @@ if st.session_state['iniciar']:
     mostrar_app_principal()
 else:
     mostrar_tela_inicial()
+
 
