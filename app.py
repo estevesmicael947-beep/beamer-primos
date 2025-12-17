@@ -34,7 +34,7 @@ def mostrar_tela_inicial():
         <br><br>
         <b>Funcionalidades:</b><br>
         ✨ Geração de sequências <b>6n ± 1</b><br>
-        📊 Histograma de Frequências (Novo)<br>
+        📊 Histograma de Frequências Inteligente<br>
         🔭 Gráficos com coloração dinâmica<br>
         💾 Exportação de Dados
         </div>
@@ -142,6 +142,10 @@ def mostrar_app_principal():
         y_values = [primelstlst[i+1] - primelstlst[i] for i in range(len(primelstlst)-1)]
         x_values = primelstlst[:-1]
 
+        # --- LÓGICA INTELIGENTE: Verificar se o 6 está a dominar ---
+        # Condição: Existem mais intervalos de 6 do que de 2 e de 4?
+        dominio_do_6 = (len(sixes) > len(twins)) and (len(sixes) > len(fours))
+
         # --- CRIAÇÃO DOS TABS ---
         tab_dash, tab_expl, tab_sobre = st.tabs(["📊 Dashboard", "📂 Explorador", "ℹ️ Sobre o Projeto"])
 
@@ -207,7 +211,7 @@ def mostrar_app_principal():
                 # 3. Histograma de Frequências
                 st.write("---")
                 st.subheader("📊 Frequência dos Intervalos")
-                st.markdown("Este gráfico mostra **quais intervalos aparecem mais vezes**. Nota como os múltiplos de 6 são dominantes.")
+                st.markdown("Este gráfico mostra **quais intervalos aparecem mais vezes**.")
                 
                 gap_counts = Counter(y_values)
                 sorted_gaps = sorted(gap_counts.keys())
@@ -231,6 +235,14 @@ def mostrar_app_principal():
                             ha='center', va='bottom', fontsize=9)
                 
                 st.pyplot(fig2)
+
+                # --- MENSAGEM INTELIGENTE NO DASHBOARD ---
+                if dominio_do_6:
+                    st.success("""
+                    👀 **Observação Interessante Detectada:**
+                    Repara no histograma acima: o intervalo **6** é mais frequente do que o 2 ou o 4.
+                    Vai à aba **'Sobre o Projeto'** para entender a explicação matemática deste fenómeno!
+                    """)
 
 
         # === TAB 2: EXPLORADOR ===
@@ -280,19 +292,25 @@ def mostrar_app_principal():
             * Se $k = 0, 2, 4$, o número é par (divisível por 2).
             * Se $k = 3$, o número é divisível por 3.
             * Logo, restam apenas as opções **$k=1$** e **$k=5$** (que equivale a $-1$).
+            """)
+
+            # --- EXPLICAÇÃO CONDICIONAL (Só aparece se o 6 dominar) ---
+            if dominio_do_6:
+                st.markdown("""
+                ---
+                ### 🌟 Porquê tantos primos com intervalo de 6?
+                Como observaste nos teus resultados, o intervalo **6** é extremamente comum (mais que 2 ou 4). Isto é explicado matematicamente:
+                
+                1.  **Divisibilidade:** O número 6 é o produto dos dois primeiros primos ($2 \\times 3$).
+                2.  **O "Filtro" dos Primos:** Para um número ser primo, não pode ser divisível por 2 nem por 3.
+                3.  **A vantagem do 6:** * Se tivermos um primo $p$ (que não é divisível por 2 nem por 3), então $p+6$ mantém as mesmas propriedades de resto. 
+                    * Ou seja, somar 6 **não altera a paridade nem a divisibilidade por 3**.
+                    * Somar 2 ou 4 pode facilmente fazer cair num múltiplo de 3, eliminando a possibilidade de ser primo.
+                
+                Por isso, é "mais fácil" encontrar pares separados por 6 (Primos Sexy) do que por outros números pequenos.
+                """)
             
-            ---
-            ### 🌟 Porquê tantos primos com intervalo de 6?
-            Observamos no histograma que o intervalo **6** é extremamente comum (mais que 2 ou 4). Isto é explicado matematicamente:
-            
-            1.  **Divisibilidade:** O número 6 é o produto dos dois primeiros primos ($2 \\times 3$).
-            2.  **O "Filtro" dos Primos:** Para um número ser primo, não pode ser divisível por 2 nem por 3.
-            3.  **A vantagem do 6:** * Se tivermos um primo $p$ (que não é divisível por 2 nem por 3), então $p+6$ mantém as mesmas propriedades de resto. 
-                * Ou seja, somar 6 **não altera a paridade nem a divisibilidade por 3**.
-                * Somar 2 ou 4 pode facilmente fazer cair num múltiplo de 3, eliminando a possibilidade de ser primo.
-            
-            Por isso, é "mais fácil" encontrar pares separados por 6 (Primos Sexy) do que por outros números pequenos.
-            
+            st.markdown("""
             ---
             ### Glossário de Intervalos
             * **Primos Gémeos:** Diferença de 2 (ex: 11, 13).
@@ -310,3 +328,4 @@ if st.session_state['iniciar']:
     mostrar_app_principal()
 else:
     mostrar_tela_inicial()
+
