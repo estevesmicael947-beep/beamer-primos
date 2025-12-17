@@ -16,11 +16,14 @@ def mostrar_tela_inicial():
     with col2:
         st.write("")
         st.write("")
-        # Tentei um link SVG direto que costuma ser mais estável
+        
+        # --- LOGO LOCAL (logo_ua.png) ---
         try:
-            st.image("logo_ua.png")
+            st.image("logo_ua.png", width=200)
         except:
-            st.write("**Universidade de Aveiro**") # Texto de reserva caso a imagem falhe
+            # Caso o ficheiro não seja encontrado, mostra texto
+            st.write("### 🏛️ Universidade de Aveiro")
+            st.caption("(Imagem 'logo_ua.png' não encontrada)")
         
         st.markdown("<h1 style='text-align: center;'>🌌 Primos e Padrões</h1>", unsafe_allow_html=True)
         st.markdown("<h3 style='text-align: center;'>Uma jornada visual pela matemática</h3>", unsafe_allow_html=True)
@@ -58,9 +61,9 @@ def mostrar_tela_inicial():
         """, unsafe_allow_html=True)
 
 def mostrar_app_principal():
-    # --- SIDEBAR COM LOGO ---
+    # --- SIDEBAR COM LOGO LOCAL ---
     try:
-        st.sidebar.image("https://upload.wikimedia.org/wikipedia/commons/2/22/Universidade_de_Aveiro_Logo.svg", use_container_width=True)
+        st.sidebar.image("logo_ua.png", use_container_width=True)
     except:
         st.sidebar.markdown("### 🏛️ Universidade de Aveiro")
 
@@ -86,29 +89,33 @@ def mostrar_app_principal():
     st.sidebar.header("Parâmetros")
     end = st.sidebar.number_input("Ordem final da sequência (n):", min_value=10, max_value=10000, value=500, step=50)
 
-    # --- CÁLCULO ---
+    # --- CÁLCULO (Otimizado) ---
     if st.sidebar.button("Calcular 🚀"):
         with st.spinner('A processar números primos...'):
             primelst = set({2, 3})
+            
+            # Função auxiliar de verificação (mais rápida)
+            def is_prime(num):
+                if num < 2: return False
+                for i in range(2, int(num**0.5) + 1):
+                    if num % i == 0:
+                        return False
+                return True
+
             # Sequência 6n - 1
             n = 1
             while n <= end:
                 num = 6 * n - 1
-                y = 2
-                while y < num:
-                    if num % y == 0: break
-                    else: y += 1
-                if y == num: primelst.add(num)
+                if is_prime(num):
+                    primelst.add(num)
                 n += 1
+
             # Sequência 6n + 1
             n = 1    
             while n <= end:
                 num = 6 * n + 1
-                y = 2
-                while y < num:
-                    if num % y == 0: break
-                    else: y += 1
-                if y == num: primelst.add(num)
+                if is_prime(num):
+                    primelst.add(num)
                 n += 1
             
             st.session_state['primelstlst'] = sorted(list(primelst))
@@ -248,4 +255,3 @@ if st.session_state['iniciar']:
     mostrar_app_principal()
 else:
     mostrar_tela_inicial()
-
