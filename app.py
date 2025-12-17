@@ -171,11 +171,11 @@ def mostrar_app_principal():
             if len(primelstlst) > 2:
                 st.subheader("📍 Dispersão dos Primos")
                 
-                # --- LEGENDA ATUALIZADA ---
+                # --- LEGENDA ATUALIZADA (CORRIGIDA) ---
                 st.info("""
                 **Legenda do Gráfico:**
                 * **Eixo X:** Posição do primo. | **Eixo Y:** Distância ao próximo.
-                * ⭐ **Estrela Dourada:** O único intervalo de 1 (entre 2 e 3).
+                * 🟣 **Ponto Magenta:** O único intervalo de 1 (entre 2 e 3).
                 * 🔵 **Azul:** Intervalos comuns. | 🔴 **Vermelho:** Intervalos grandes (raros).
                 """)
                 
@@ -183,22 +183,19 @@ def mostrar_app_principal():
                 
                 fig, ax = plt.subplots(figsize=(12, 6))
                 
-                # --- SEPARAÇÃO DOS DADOS (O Segredo para destacar o 1) ---
                 x_arr = np.array(x_values)
                 y_arr = np.array(y_values)
                 
                 # Filtro para encontrar onde o gap é 1
                 mask_1 = (y_arr == 1)
                 
-                # Dados normais (Gap > 1)
                 x_others = x_arr[~mask_1]
                 y_others = y_arr[~mask_1]
                 
-                # Dados únicos (Gap = 1)
                 x_unique = x_arr[mask_1]
                 y_unique = y_arr[mask_1]
                 
-                # 1. Plotar os "Outros" com o gradiente normal
+                # 1. Plotar os "Outros"
                 scatter_plot = ax.scatter(
                     x_others, 
                     y_others, 
@@ -211,16 +208,16 @@ def mostrar_app_principal():
                     linewidth=0.4
                 )
                 
-                # 2. Plotar o "Único" (Gap 1) com destaque especial (Estrela Dourada)
+                # 2. Plotar o "Único" (Gap 1) - Agora como Círculo Magenta
                 if len(x_unique) > 0:
                     ax.scatter(
                         x_unique, 
                         y_unique, 
-                        s=150,              # Maior que os outros
-                        c='#FFD700',        # Dourado (Gold)
-                        marker='*',         # Estrela
+                        s=80,               # Um pouco maior para destaque
+                        c='#D500F9',        # Magenta Vibrante
+                        marker='o',         # Círculo (consistente)
                         edgecolors='black', 
-                        linewidth=0.8,
+                        linewidth=1.0,      # Borda mais grossa
                         label='Gap Único (1)'
                     )
                 
@@ -250,14 +247,14 @@ def mostrar_app_principal():
 
                 fig2, ax2 = plt.subplots(figsize=(12, 4))
                 
-                # Definir cores: Dourado para o '1', Azul padrão para os outros
-                colors = ['#FFD700' if g == '1' else '#4e79a7' for g in x_labels]
+                # Cor Magenta para o 1, Azul padrão para os outros
+                colors = ['#D500F9' if g == '1' else '#4e79a7' for g in x_labels]
                 
                 bars = ax2.bar(x_labels, filtered_counts, color=colors, edgecolor='black', alpha=0.8, width=0.6)
                 
                 ax2.set_xlabel("Tipo de Intervalo")
                 ax2.set_ylabel("Frequência")
-                ax2.set_title("Dominância dos Intervalos (Ouro = Intervalo Único)")
+                ax2.set_title("Dominância dos Intervalos (Magenta = Intervalo Único)")
                 ax2.grid(axis='y', linestyle='--', alpha=0.5)
                 
                 for bar in bars:
@@ -363,3 +360,4 @@ if st.session_state['iniciar']:
     mostrar_app_principal()
 else:
     mostrar_tela_inicial()
+
