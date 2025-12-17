@@ -3,12 +3,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from collections import Counter
-from matplotlib.ticker import MaxNLocator  # Importação nova para corrigir os decimais
+from matplotlib.ticker import MaxNLocator  # Para corrigir os decimais
 
 # --- Configuração da Página ---
 st.set_page_config(page_title="Primos e Padrões", layout="wide", page_icon="🧮")
 
-# --- LÓGICA DE NAVEGAÇÃO (TELA INICIAL vs APP) ---
+# --- LÓGICA DE NAVEGAÇÃO ---
 if 'iniciar' not in st.session_state:
     st.session_state['iniciar'] = False
 
@@ -19,7 +19,6 @@ def mostrar_tela_inicial():
         st.write("")
         st.write("")
         
-        # --- LOGO LOCAL ---
         try:
             st.image("logo_ua.png", width=150)
         except:
@@ -33,14 +32,12 @@ def mostrar_tela_inicial():
         st.write("")
         st.write("")
 
-        # --- BOTÃO DE AÇÃO ---
         c1, c2, c3 = st.columns([1, 2, 1]) 
         with c2:
             if st.button("Iniciar Investigação ⚡", type="primary", use_container_width=True):
                 st.session_state['iniciar'] = True
                 st.rerun()
 
-        # --- CRÉDITOS ---
         st.write("")
         st.write("")
         st.write("")
@@ -66,7 +63,6 @@ def mostrar_app_principal():
     
     st.sidebar.markdown("---")
     
-    # --- INPUTS ---
     st.sidebar.markdown("**Definição do Intervalo:**")
     
     end = st.sidebar.number_input(
@@ -85,7 +81,6 @@ def mostrar_app_principal():
     Ao escolher **n = {end}**, estamos a investigar números até aprox. **{limite_real}**.
     """)
 
-    # --- CÁLCULO ---
     if st.sidebar.button("Gerar Padrões ⚡", type="primary"):
         with st.spinner(f'A calcular primos até {limite_real}...'):
             primelst = set({2, 3})
@@ -119,13 +114,11 @@ def mostrar_app_principal():
 
     st.title("🧮 Análise de Padrões em Números Primos")
     
-    # --- MEMÓRIA ---
     if 'primelstlst' not in st.session_state:
         st.session_state['primelstlst'] = []
     if 'calculou' not in st.session_state:
         st.session_state['calculou'] = False
 
-    # --- VISUALIZAÇÃO ---
     if st.session_state['calculou']:
         primelstlst = st.session_state['primelstlst']
         
@@ -142,13 +135,11 @@ def mostrar_app_principal():
         eights = todos_intervalos.get(8, [])
         tens = todos_intervalos.get(10, [])
 
-        # Preparação de Dados
         y_values = [primelstlst[i+1] - primelstlst[i] for i in range(len(primelstlst)-1)]
         x_values = primelstlst[:-1]
 
         dominio_do_6 = (len(sixes) > len(twins)) and (len(sixes) > len(fours))
 
-        # --- ABAS ---
         tab_dash, tab_expl, tab_sobre = st.tabs(["📉 Análise Visual", "🔬 Laboratório de Dados", "🎓 Teoria Matemática"])
 
         # === TAB 1: PAINEL DE ANÁLISE ===
@@ -172,11 +163,13 @@ def mostrar_app_principal():
             if len(primelstlst) > 2:
                 st.subheader("📍 Dispersão dos Primos")
                 
+                # --- CORREÇÃO CIENTÍFICA AQUI ---
                 st.info("""
                 **Legenda do Gráfico:**
                 * **Eixo X:** Posição do primo. | **Eixo Y:** Distância ao próximo.
                 * 🟣 **Ponto Magenta:** O único intervalo de 1 (entre 2 e 3).
-                * 🔵 **Azul:** Intervalos comuns. | 🔴 **Vermelho:** Intervalos grandes (raros).
+                * 🔵 **Azul:** Intervalos mais frequentes. | 🔴 **Vermelho:** Intervalos de grande dimensão.
+                * *Nota: A frequência não desce linearmente. Intervalos múltiplos de 6 são mais comuns.*
                 """)
                 
                 max_y_zoom = st.slider("Zoom Vertical (Eixo Y):", min_value=6, max_value=max(y_values) if y_values else 100, value=30, step=2)
@@ -189,33 +182,19 @@ def mostrar_app_principal():
                 
                 x_others = x_arr[~mask_1]
                 y_others = y_arr[~mask_1]
-                
                 x_unique = x_arr[mask_1]
                 y_unique = y_arr[mask_1]
                 
-                # 1. Plotar os "Outros"
                 scatter_plot = ax.scatter(
-                    x_others, 
-                    y_others, 
-                    s=30, 
-                    c=y_others, 
-                    cmap='Spectral_r', 
-                    marker='o', 
-                    alpha=0.9, 
-                    edgecolors='black', 
-                    linewidth=0.4
+                    x_others, y_others, s=30, c=y_others, 
+                    cmap='Spectral_r', marker='o', alpha=0.9, 
+                    edgecolors='black', linewidth=0.4
                 )
                 
-                # 2. Plotar o "Único" (Gap 1)
                 if len(x_unique) > 0:
                     ax.scatter(
-                        x_unique, 
-                        y_unique, 
-                        s=80,               
-                        c='#D500F9',        
-                        marker='o',         
-                        edgecolors='black', 
-                        linewidth=1.0,      
+                        x_unique, y_unique, s=80, c='#D500F9', 
+                        marker='o', edgecolors='black', linewidth=1.0, 
                         label='Gap Único (1)'
                     )
                 
@@ -244,12 +223,9 @@ def mostrar_app_principal():
                 x_labels = [str(g) for g in filtered_gaps]
 
                 fig2, ax2 = plt.subplots(figsize=(12, 4))
-                
                 colors = ['#D500F9' if g == '1' else '#4e79a7' for g in x_labels]
                 
                 bars = ax2.bar(x_labels, filtered_counts, color=colors, edgecolor='black', alpha=0.8, width=0.6)
-                
-                # --- CORREÇÃO DO EIXO Y (Números Inteiros) ---
                 ax2.yaxis.set_major_locator(MaxNLocator(integer=True))
                 
                 ax2.set_xlabel("Tipo de Intervalo")
@@ -270,14 +246,13 @@ def mostrar_app_principal():
                         st.markdown("""
                         ### 💡 Observação Matemática Detetada
                         **O intervalo 6 é o mais frequente.**
-                        Isto não é coincidência. Consulte a aba **'🎓 Teoria Matemática'** para entender por que razão o 6 "vence" o 2 e o 4.
+                        Isto confirma a tendência de que múltiplos de 6 são privilegiados, mesmo quando comparados com intervalos menores como 4.
                         """)
 
         # === TAB 2: EXPLORADOR ===
         with tab_expl:
             st.header("🔬 Laboratório de Dados")
             col_left, col_right = st.columns([1, 2])
-            
             with col_left:
                 st.markdown("### 1. Filtragem")
                 gaps_disponiveis = sorted(todos_intervalos.keys())
@@ -291,13 +266,7 @@ def mostrar_app_principal():
                     st.markdown("---")
                     st.markdown("### 2. Exportação")
                     csv_data = pd.DataFrame(primelstlst, columns=["Números Primos"]).to_csv(index=False).encode('utf-8')
-                    st.download_button(
-                        label="💾 Exportar Conjunto de Dados (CSV)",
-                        data=csv_data,
-                        file_name='dataset_primos.csv',
-                        mime='text/csv',
-                        type='primary'
-                    )
+                    st.download_button("💾 Exportar Conjunto de Dados (CSV)", csv_data, 'dataset_primos.csv', 'text/csv', type='primary')
 
             with col_right:
                 st.markdown(f"### 📋 Resultados: Intervalo {gap_escolhido}")
@@ -312,42 +281,31 @@ def mostrar_app_principal():
             st.markdown("""
             Projeto desenvolvido para a unidade curricular **TMFC (Teoria Matemática)** na Universidade de Aveiro.
             
-            ### 📐 Porquê 6n ± 1? (E não apenas 6n + 1)
-            Muitas vezes surge a dúvida: *"Porque precisamos do -1? Não basta o +1?"*
-            
-            A resposta é **não**. Se usarmos apenas $6n + 1$, perdemos metade dos números primos.
-            Repara nos vizinhos dos múltiplos de 6:
-            * **6n + 1:** Gera primos como 7, 13, 19, 31...
-            * **6n - 1 (ou 6n + 5):** Gera primos como 5, 11, 17, 23...
-            
-            É obrigatório usar **ambas** as formas para cobrir todos os números primos (exceto o 2 e o 3).
+            ### 📐 Porquê 6n ± 1?
+            Usamos $6n-1$ e $6n+1$ para garantir que cobrimos todos os primos possíveis (exceto 2 e 3).
             
             ---
+            
+            ### 🎢 A Oscilação dos Intervalos
+            Como observaste nos teus resultados (ex: **Intervalo 10 mais comum que o 8**), a distribuição não é uma linha a descer suave.
+            * Os intervalos tendem a ser mais frequentes se forem **múltiplos de 6** (6, 12, 18, 24...).
+            * Intervalos como 8 ou 10, que não são divisíveis por 3, são menos favorecidos.
+            * Em escalas pequenas, a diferença entre 8 e 10 pode dever-se a flutuações estatísticas locais, contrariando a ideia de que "maior é sempre mais raro".
             """)
 
             if dominio_do_6:
                 with st.container(border=True):
                     st.markdown("""
                     ### 🌟 O Fenómeno do Intervalo 6
-                    A análise gráfica revelou que o intervalo 6 aparece mais vezes que o 2 ou o 4. Eis a explicação lógica:
-
-                    Para um número ser Primo, ele tem de passar dois "filtros": **não ser divisível por 2** e **não ser divisível por 3**.
-                    """)
-                    st.markdown("""
-                    
-                    """)
-                    st.markdown("""
-                    * **O Número 6:** É o produto perfeito destes filtros ($2 \\times 3 = 6$).
-                    * **A "Segurança" do 6:** Ao somarmos 6 a um número primo, **mantemos as propriedades** de resto dele. Se ele já passou nos filtros do 2 e do 3, o novo número também passará (ao contrário de somar 2 ou 4, que pode criar um múltiplo de 3).
-                    
-                    **Conclusão:** Somar 6 é o caminho estatisticamente "mais limpo" para encontrar o próximo primo.
+                    O intervalo 6 é o "Rei dos Intervalos" porque 6 é divisível por 2 e por 3.
+                    Ao somar 6 a um primo, garantimos que não caímos num múltiplo de 2 ou 3 (os "matadores de primos" mais comuns), tornando mais provável encontrar outro primo.
                     """)
             
             st.markdown("""
             ### 📚 Glossário de Intervalos
             * **Primos Gémeos:** $p, p+2$ (ex: 11, 13).
             * **Primos Primos:** $p, p+4$ (ex: 7, 11).
-            * **Primos Sexy:** $p, p+6$ (ex: 5, 11) - o nome vem do latim *sex* (seis).
+            * **Primos Sexy:** $p, p+6$ (ex: 5, 11).
             """)
             st.write("---")
             st.caption("Investigação realizada por: Catarina Mendes, Diogo Maria, Mateus Carmo e Micael Esteves | Com apoio do Gemini.")
@@ -355,10 +313,7 @@ def mostrar_app_principal():
     else:
         st.info("👈 Defina o valor de **n** na barra lateral e clique em **Gerar Padrões** para iniciar.")
 
-# --- CONTROLADOR PRINCIPAL ---
 if st.session_state['iniciar']:
     mostrar_app_principal()
 else:
     mostrar_tela_inicial()
-
-
