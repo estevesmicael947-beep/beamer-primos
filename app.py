@@ -18,7 +18,7 @@ def mostrar_tela_inicial():
         st.write("")
         # Tentei um link SVG direto que costuma ser mais estável
         try:
-            st.image("https://upload.wikimedia.org/wikipedia/commons/2/22/Universidade_de_Aveiro_Logo.svg", width=200)
+            st.image("logo_ua.png")
         except:
             st.write("**Universidade de Aveiro**") # Texto de reserva caso a imagem falhe
         
@@ -248,3 +248,4 @@ if st.session_state['iniciar']:
     mostrar_app_principal()
 else:
     mostrar_tela_inicial()
+
