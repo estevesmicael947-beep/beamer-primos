@@ -163,13 +163,12 @@ def mostrar_app_principal():
             if len(primelstlst) > 2:
                 st.subheader("📍 Dispersão dos Primos")
                 
-                # --- CORREÇÃO CIENTÍFICA AQUI ---
+                # --- LEGENDA LIMPA ---
                 st.info("""
                 **Legenda do Gráfico:**
                 * **Eixo X:** Posição do primo. | **Eixo Y:** Distância ao próximo.
                 * 🟣 **Ponto Magenta:** O único intervalo de 1 (entre 2 e 3).
                 * 🔵 **Azul:** Intervalos mais frequentes. | 🔴 **Vermelho:** Intervalos de grande dimensão.
-                * *Nota: A frequência não desce linearmente. Intervalos múltiplos de 6 são mais comuns.*
                 """)
                 
                 max_y_zoom = st.slider("Zoom Vertical (Eixo Y):", min_value=6, max_value=max(y_values) if y_values else 100, value=30, step=2)
@@ -207,7 +206,10 @@ def mostrar_app_principal():
                 ax.grid(True, axis='y', linestyle='-', linewidth=0.5, alpha=0.3, color='gray')
                 ax.set_xlabel("Número Primo ($p$)", fontsize=11)
                 ax.set_ylabel("Distância ao próximo primo (Intervalo)", fontsize=11)
-                ax.set_title(f"Mapa de Calor dos Intervalos (Zoom até {max_y_zoom})", fontsize=13)
+                
+                # --- NOVO NOME DO GRÁFICO ---
+                ax.set_title(f"Dispersão dos Intervalos entre Primos (Zoom até {max_y_zoom})", fontsize=13)
+                
                 ax.set_xlim(0, max(x_values))
                 st.pyplot(fig)
 
