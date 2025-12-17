@@ -65,7 +65,7 @@ def mostrar_app_principal():
     
     st.sidebar.markdown("---")
     
-    # --- INPUTS CLARIFICADOS ---
+    # --- INPUTS ---
     st.sidebar.markdown("**Definição do Intervalo:**")
     
     end = st.sidebar.number_input(
@@ -96,14 +96,12 @@ def mostrar_app_principal():
                         return False
                 return True
 
-            # GERAÇÃO 6n - 1
             n = 1
             while n <= end:
                 num = 6 * n - 1
                 if is_prime(num): primelst.add(num)
                 n += 1
 
-            # GERAÇÃO 6n + 1
             n = 1    
             while n <= end:
                 num = 6 * n + 1
@@ -143,6 +141,7 @@ def mostrar_app_principal():
         eights = todos_intervalos.get(8, [])
         tens = todos_intervalos.get(10, [])
 
+        # Preparação de Dados
         y_values = [primelstlst[i+1] - primelstlst[i] for i in range(len(primelstlst)-1)]
         x_values = primelstlst[:-1]
 
@@ -171,28 +170,59 @@ def mostrar_app_principal():
 
             if len(primelstlst) > 2:
                 st.subheader("📍 Dispersão dos Primos")
+                
+                # --- LEGENDA ATUALIZADA ---
                 st.info("""
                 **Legenda do Gráfico:**
-                * **Eixo X ($p$):** A posição na linha dos números.
-                * **Eixo Y (Intervalo):** A distância até ao próximo primo.
-                * 🎨 **Cor:** Azul (Intervalos comuns) ➝ Vermelho (Intervalos raros).
+                * **Eixo X:** Posição do primo. | **Eixo Y:** Distância ao próximo.
+                * ⭐ **Estrela Dourada:** O único intervalo de 1 (entre 2 e 3).
+                * 🔵 **Azul:** Intervalos comuns. | 🔴 **Vermelho:** Intervalos grandes (raros).
                 """)
                 
                 max_y_zoom = st.slider("Zoom Vertical (Eixo Y):", min_value=6, max_value=max(y_values) if y_values else 100, value=30, step=2)
                 
                 fig, ax = plt.subplots(figsize=(12, 6))
                 
+                # --- SEPARAÇÃO DOS DADOS (O Segredo para destacar o 1) ---
+                x_arr = np.array(x_values)
+                y_arr = np.array(y_values)
+                
+                # Filtro para encontrar onde o gap é 1
+                mask_1 = (y_arr == 1)
+                
+                # Dados normais (Gap > 1)
+                x_others = x_arr[~mask_1]
+                y_others = y_arr[~mask_1]
+                
+                # Dados únicos (Gap = 1)
+                x_unique = x_arr[mask_1]
+                y_unique = y_arr[mask_1]
+                
+                # 1. Plotar os "Outros" com o gradiente normal
                 scatter_plot = ax.scatter(
-                    x_values, 
-                    y_values, 
+                    x_others, 
+                    y_others, 
                     s=30, 
-                    c=y_values, 
+                    c=y_others, 
                     cmap='Spectral_r', 
                     marker='o', 
                     alpha=0.9, 
                     edgecolors='black', 
                     linewidth=0.4
                 )
+                
+                # 2. Plotar o "Único" (Gap 1) com destaque especial (Estrela Dourada)
+                if len(x_unique) > 0:
+                    ax.scatter(
+                        x_unique, 
+                        y_unique, 
+                        s=150,              # Maior que os outros
+                        c='#FFD700',        # Dourado (Gold)
+                        marker='*',         # Estrela
+                        edgecolors='black', 
+                        linewidth=0.8,
+                        label='Gap Único (1)'
+                    )
                 
                 cbar = plt.colorbar(scatter_plot, ax=ax)
                 cbar.set_label('Tamanho do Intervalo')
@@ -219,11 +249,15 @@ def mostrar_app_principal():
                 x_labels = [str(g) for g in filtered_gaps]
 
                 fig2, ax2 = plt.subplots(figsize=(12, 4))
-                bars = ax2.bar(x_labels, filtered_counts, color='#4e79a7', edgecolor='black', alpha=0.7, width=0.6)
+                
+                # Definir cores: Dourado para o '1', Azul padrão para os outros
+                colors = ['#FFD700' if g == '1' else '#4e79a7' for g in x_labels]
+                
+                bars = ax2.bar(x_labels, filtered_counts, color=colors, edgecolor='black', alpha=0.8, width=0.6)
                 
                 ax2.set_xlabel("Tipo de Intervalo")
                 ax2.set_ylabel("Frequência")
-                ax2.set_title("Dominância dos Intervalos")
+                ax2.set_title("Dominância dos Intervalos (Ouro = Intervalo Único)")
                 ax2.grid(axis='y', linestyle='--', alpha=0.5)
                 
                 for bar in bars:
@@ -302,11 +336,9 @@ def mostrar_app_principal():
 
                     Para um número ser Primo, ele tem de passar dois "filtros": **não ser divisível por 2** e **não ser divisível por 3**.
                     """)
-                    
                     st.markdown("""
                     
                     """)
-
                     st.markdown("""
                     * **O Número 6:** É o produto perfeito destes filtros ($2 \\times 3 = 6$).
                     * **A "Segurança" do 6:** Ao somarmos 6 a um número primo, **mantemos as propriedades** de resto dele. Se ele já passou nos filtros do 2 e do 3, o novo número também passará (ao contrário de somar 2 ou 4, que pode criar um múltiplo de 3).
