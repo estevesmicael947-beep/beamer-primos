@@ -265,17 +265,32 @@ def mostrar_app_principal():
                     st.markdown("---")
                     st.markdown("### 2. Exportação")
                     
-                    # --- ATUALIZAÇÃO DA EXPORTAÇÃO ---
-                    # Criar um DataFrame com 3 colunas para ser útil
-                    df_export = pd.DataFrame({
-                        "Primo Atual": primelstlst[:-1],
-                        "Próximo Primo": primelstlst[1:],
-                        "Intervalo (Gap)": y_values
-                    })
+                    # --- NOVA LÓGICA DE EXPORTAÇÃO ORGANIZADA ---
+                    # 1. Criar dicionário onde cada Chave é "Gap X" e valor é lista de strings "p1 - p2"
+                    export_dict = {}
                     
-                    csv_data = df_export.to_csv(index=False).encode('utf-8')
+                    for gap in gaps_disponiveis:
+                        col_name = f"Intervalo {gap}"
+                        pares_formatados = [f"{p[0]} - {p[1]}" for p in todos_intervalos[gap]]
+                        export_dict[col_name] = pares_formatados
                     
-                    st.download_button("💾 Exportar Conjunto de Dados (CSV)", csv_data, 'dataset_primos_completo.csv', 'text/csv', type='primary')
+                    # 2. Converter para DataFrame (preenche automaticamente colunas menores com NaN)
+                    # dict orient='index' e transpose é um truque para alinhar colunas de tamanhos diferentes
+                    df_export = pd.DataFrame(dict([(k, pd.Series(v)) for k, v in export_dict.items()]))
+                    
+                    # 3. Limpar os NaN (ficar células vazias)
+                    df_export = df_export.fillna("")
+                    
+                    # 4. Exportar com separador ponto e vírgula (ideal para Excel PT)
+                    csv_data = df_export.to_csv(index=False, sep=';').encode('utf-8-sig')
+                    
+                    st.download_button(
+                        label="💾 Exportar Tabela Organizada (Excel/CSV)", 
+                        data=csv_data, 
+                        file_name='primos_por_intervalo.csv', 
+                        mime='text/csv', 
+                        type='primary'
+                    )
 
             with col_right:
                 st.markdown(f"### 📋 Resultados: Intervalo {gap_escolhido}")
