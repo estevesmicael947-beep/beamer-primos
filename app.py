@@ -63,20 +63,29 @@ if st.session_state['calculou']:
     
     primelstlst = st.session_state['primelstlst']
     
-    # Recalcula as categorias
-    twins, fours, sixes, eights, tens = [], [], [], [], []
+    # --- NOVA LÓGICA: Dicionário de Intervalos ---
+    # Isto vai guardar TODOS os intervalos encontrados (2, 4, 6, 8, 10, 12, 14...)
+    # Chave = Tamanho do intervalo (Gap)
+    # Valor = Lista de pares
+    todos_intervalos = {}
 
     for x in range(len(primelstlst)-1):
         diff = primelstlst[x+1] - primelstlst[x]
         pair = (primelstlst[x], primelstlst[x+1])
         
-        if diff == 2: twins.append(pair)
-        elif diff == 4: fours.append(pair)
-        elif diff == 6: sixes.append(pair)
-        elif diff == 8: eights.append(pair)
-        elif diff == 10: tens.append(pair)
+        if diff not in todos_intervalos:
+            todos_intervalos[diff] = []
+        
+        todos_intervalos[diff].append(pair)
 
-    # --- PARTE 1: MÉTRICAS E LISTAS ---
+    # Listas clássicas para as métricas (apenas para manter o visual bonito lá em cima)
+    twins = todos_intervalos.get(2, [])
+    fours = todos_intervalos.get(4, [])
+    sixes = todos_intervalos.get(6, [])
+    eights = todos_intervalos.get(8, [])
+    tens = todos_intervalos.get(10, [])
+
+    # --- PARTE 1: MÉTRICAS ---
     st.subheader("📊 Estatísticas Encontradas")
     col1, col2, col3, col4, col5 = st.columns(5)
     
@@ -89,27 +98,11 @@ if st.session_state['calculou']:
     st.info(f"Total de números primos encontrados: **{len(primelstlst)}**")
 
     st.write("---")
-    col_left, col_right = st.columns(2)
-    
-    with col_left:
-        with st.expander("Ver lista de Primos Gémeos"):
-            st.write(twins)
-        with st.expander("Ver lista Dif. 4"):
-            st.write(fours)
-        with st.expander("Ver lista Dif. 6"):
-            st.write(sixes)
-
-    with col_right:
-        with st.expander("Ver lista completa de Primos"):
-            st.write(primelstlst)
 
     # --- PARTE 2: O GRÁFICO ---
-    
     if len(primelstlst) > 2:
-        st.write("---")
         st.subheader("📈 Distribuição dos Intervalos (Gaps)")
 
-        # --- NOVA EXPLICAÇÃO AQUI ---
         st.info("""
         **O que significam os pontos?** Os pontos marcam os primos que têm esse intervalo.  
         * **Eixo Horizontal:** Indica qual é o número primo.
@@ -125,7 +118,7 @@ if st.session_state['calculou']:
         
         fig, ax = plt.subplots(figsize=(12, 6))
         
-        # Pontinhos pretos (scatter)
+        # Pontinhos pretos
         ax.scatter(x_values, y_values, s=15, c='black', marker='.', alpha=0.5)
         
         # Configuração do Eixo Y
@@ -141,6 +134,36 @@ if st.session_state['calculou']:
         ax.set_xlim(0, max(x_values))
 
         st.pyplot(fig)
+
+    # --- PARTE 3: EXPLORADOR DE INTERVALOS (NOVO) ---
+    st.write("---")
+    st.subheader("📂 Explorador de Intervalos")
+    st.markdown("Aqui podes selecionar **qualquer intervalo** que apareça no gráfico para ver os números primos correspondentes.")
+
+    # Criar lista ordenada dos intervalos disponíveis (chaves do dicionário)
+    gaps_disponiveis = sorted(todos_intervalos.keys())
+
+    if not gaps_disponiveis:
+        st.warning("Ainda não há dados suficientes.")
+    else:
+        # Colunas para organizar o layout
+        col_sel, col_res = st.columns([1, 2])
+        
+        with col_sel:
+            # Caixa de seleção
+            gap_escolhido = st.selectbox(
+                "Escolhe o tamanho do intervalo (Gap):", 
+                options=gaps_disponiveis
+            )
+            
+            # Mostra a quantidade encontrada
+            qtd_encontrada = len(todos_intervalos[gap_escolhido])
+            st.success(f"Foram encontrados **{qtd_encontrada}** pares com intervalo de **{gap_escolhido}**.")
+
+        with col_res:
+            # Mostra a lista dentro de um expander para não ocupar muito espaço se for grande
+            with st.expander(f"Ver lista de pares com intervalo {gap_escolhido}", expanded=True):
+                st.write(todos_intervalos[gap_escolhido])
 
 else:
     st.write("👈 Ajuste o valor de **n** na barra lateral e clique em calcular.")
