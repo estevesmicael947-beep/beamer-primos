@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 # --- Configuração da Página ---
 st.set_page_config(page_title="Primos e Padrões", layout="wide")
 
-st.title("🔍 Análise de Padrões em Números Primos")
+st.title(" Análise de Padrões em Números Primos")
 st.markdown("""
 Esta aplicação gera números primos baseados na sequência **6n ± 1** e analisa as diferenças entre eles.
 """)
@@ -75,7 +75,7 @@ if st.sidebar.button("Calcular 🚀"):
         # --- APRESENTAÇÃO DOS RESULTADOS ---
 
         # 1. Métricas
-        st.subheader("📊 Estatísticas Encontradas")
+        st.subheader("Estatísticas Encontradas")
         col1, col2, col3, col4, col5 = st.columns(5)
         
         col1.metric("Gémeos (2)", len(twins))
@@ -105,7 +105,7 @@ if st.sidebar.button("Calcular 🚀"):
         # 3. O Gráfico (Versão Original - Linha Conectada)
         if len(twins) > 1:
             st.write("---")
-            st.subheader("📈 Distância entre pares de Primos Gémeos")
+            st.subheader(" Distância entre pares de Primos Gémeos")
             
             # Cálculo original do gráfico
             twingap = [twins[x+1][0] - twins[x][0] for x in range(len(twins)-1)]
@@ -126,4 +126,5 @@ if st.sidebar.button("Calcular 🚀"):
             st.warning("Não há dados suficientes de primos gémeos para gerar o gráfico. Aumente o valor de n.")
 
 else:
-    st.write("👈 Ajuste o valor de **n** na barra lateral e clique em calcular.")
+    st.write(" Ajuste o valor de **n** na barra lateral e clique em calcular.")
+
