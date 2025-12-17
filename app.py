@@ -5,7 +5,7 @@ import numpy as np
 # --- Configuração da Página ---
 st.set_page_config(page_title="Primos e Padrões", layout="wide")
 
-st.title("🔍 Análise de Padrões em Números Primos")
+st.title("Análise de Padrões em Números Primos")
 st.markdown("""
 Esta aplicação gera números primos baseados na sequência **6n ± 1**, analisa as diferenças e permite **zoom interativo**.
 """)
@@ -22,7 +22,7 @@ st.sidebar.header("Parâmetros")
 end = st.sidebar.number_input("Ordem final da sequência (n):", min_value=10, max_value=10000, value=100, step=10)
 
 # --- 3. LÓGICA DE CÁLCULO ---
-if st.sidebar.button("Calcular 🚀"):
+if st.sidebar.button("Calcular"):
     
     with st.spinner('A processar números primos...'):
         primelst = set({2, 3})
@@ -84,7 +84,7 @@ if st.session_state['calculou']:
 
     # --- PARTE 1: MÉTRICAS E LISTAS (O teu design original) ---
     
-    st.subheader("📊 Estatísticas Encontradas")
+    st.subheader("Estatísticas Encontradas")
     col1, col2, col3, col4, col5 = st.columns(5)
     
     col1.metric("Gémeos (2)", len(twins))
@@ -115,7 +115,7 @@ if st.session_state['calculou']:
     
     if len(primelstlst) > 2:
         st.write("---")
-        st.subheader("📈 Distribuição dos Intervalos (Gaps)")
+        st.subheader("Distribuição dos Intervalos (Gaps)")
         
         # Preparação dos dados para o plot
         x_values = primelstlst[:-1] 
@@ -145,4 +145,5 @@ if st.session_state['calculou']:
         st.caption("Dica: Use o slider acima para fazer zoom e ver melhor a densidade dos pontos nas linhas 2, 4 e 6.")
 
 else:
-    st.write("👈 Ajuste o valor de **n** na barra lateral e clique em calcular.")
+    st.write("Ajuste o valor de **n** na barra lateral e clique em calcular.")
+
