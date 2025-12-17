@@ -5,7 +5,7 @@ import pandas as pd
 from collections import Counter
 
 # --- Configuração da Página ---
-st.set_page_config(page_title="Primos e Padrões", layout="wide")
+st.set_page_config(page_title="Primos e Padrões", layout="wide", page_icon="🧮")
 
 # --- LÓGICA DE NAVEGAÇÃO (TELA INICIAL vs APP) ---
 if 'iniciar' not in st.session_state:
@@ -25,18 +25,18 @@ def mostrar_tela_inicial():
             st.write("### 🏛️ Universidade de Aveiro")
             st.caption("(Imagem 'logo_ua.png' não encontrada)")
         
-        st.markdown("<h1 style='text-align: center;'>🌌 Primos e Padrões</h1>", unsafe_allow_html=True)
-        st.markdown("<h3 style='text-align: center;'>Uma jornada visual pela matemática</h3>", unsafe_allow_html=True)
+        st.markdown("<h1 style='text-align: center;'>🧮 Primos e Padrões</h1>", unsafe_allow_html=True)
+        st.markdown("<h3 style='text-align: center;'>A beleza matemática da sequência 6n ± 1</h3>", unsafe_allow_html=True)
         st.write("---")
         st.markdown("""
         <div style='text-align: center; font-size: 18px;'>
-        Esta aplicação foi desenhada para explorar a beleza oculta dos números primos.
+        Esta aplicação explora a distribuição e os intervalos dos números primos.
         <br><br>
-        <b>Funcionalidades:</b><br>
-        ✨ Geração de sequências <b>6n ± 1</b><br>
-        📊 Histograma de Frequências Inteligente<br>
-        🔭 Gráficos com coloração dinâmica<br>
-        💾 Exportação de Dados
+        <b>O que vai encontrar neste estudo:</b><br>
+        📉 Análise visual de densidade<br>
+        🧩 Padrões de congruência modular<br>
+        🔬 Investigação de "Primos Sexy" (Gap 6)<br>
+        💾 Exportação de dados para pesquisa
         </div>
         """, unsafe_allow_html=True)
         
@@ -44,7 +44,7 @@ def mostrar_tela_inicial():
         st.write("")
         
         cols_btn = st.columns([1, 1, 1])
-        if cols_btn[1].button("Começar a Explorar 🚀", type="primary", use_container_width=True):
+        if cols_btn[1].button("Iniciar Investigação ⚡", type="primary", use_container_width=True):
             st.session_state['iniciar'] = True
             st.rerun()
 
@@ -67,17 +67,17 @@ def mostrar_app_principal():
     except:
         st.sidebar.markdown("### 🏛️ Universidade de Aveiro")
 
-    st.sidebar.markdown("### ⚙️ Configurações")
-    if st.sidebar.button("🏠 Voltar ao Início"):
+    st.sidebar.markdown("### ⚙️ Parâmetros do Estudo")
+    if st.sidebar.button("🏠 Voltar à Capa"):
         st.session_state['iniciar'] = False
         st.rerun()
     
     st.sidebar.markdown("---")
     st.sidebar.caption("**Universidade de Aveiro**")
-    st.sidebar.caption("No âmbito de **TMFC**")
-    st.sidebar.caption("Por: Catarina Mendes, Diogo Maria, Mateus Carmo e Micael Esteves")
+    st.sidebar.caption("Projeto **TMFC**")
+    st.sidebar.caption("Autores: Catarina, Diogo, Mateus, Micael")
 
-    st.title("🔍 Análise de Padrões em Números Primos")
+    st.title("🧮 Análise de Padrões em Números Primos")
     
     # --- MEMÓRIA ---
     if 'primelstlst' not in st.session_state:
@@ -86,12 +86,11 @@ def mostrar_app_principal():
         st.session_state['calculou'] = False
 
     # --- INPUTS ---
-    st.sidebar.header("Parâmetros")
-    end = st.sidebar.number_input("Ordem final da sequência (n):", min_value=10, max_value=20000, value=500, step=50)
+    end = st.sidebar.number_input("Limite da sequência (n):", min_value=10, max_value=20000, value=500, step=50, help="Define até onde a sequência 6n é calculada.")
 
     # --- CÁLCULO ---
-    if st.sidebar.button("Calcular 🚀"):
-        with st.spinner('A processar números primos e a gerar estatísticas...'):
+    if st.sidebar.button("Gerar Padrões ⚡", type="primary"):
+        with st.spinner('A processar cálculos aritméticos...'):
             primelst = set({2, 3})
             
             # Função de verificação otimizada
@@ -145,19 +144,19 @@ def mostrar_app_principal():
         # --- LÓGICA INTELIGENTE ---
         dominio_do_6 = (len(sixes) > len(twins)) and (len(sixes) > len(fours))
 
-        # --- CRIAÇÃO DOS TABS ---
-        tab_dash, tab_expl, tab_sobre = st.tabs(["📊 Dashboard", "📂 Explorador", "ℹ️ Sobre o Projeto"])
+        # --- CRIAÇÃO DOS TABS TEMÁTICOS ---
+        tab_dash, tab_expl, tab_sobre = st.tabs(["📉 Análise Visual", "🔬 Laboratório de Dados", "🎓 Teoria Matemática"])
 
         # === TAB 1: DASHBOARD ===
         with tab_dash:
             # 1. Métricas Principais
-            st.subheader("Estatísticas Gerais")
+            st.markdown("### 📊 Indicadores Globais")
             kpi1, kpi2, kpi3 = st.columns(3)
-            with kpi1: st.metric("🔢 Total de Primos", len(primelstlst), border=True)
-            with kpi2: st.metric("🔝 Maior Primo Encontrado", max(primelstlst) if primelstlst else 0, border=True)
+            with kpi1: st.metric("🔢 Primos Identificados", len(primelstlst), border=True)
+            with kpi2: st.metric("🔝 Maior Primo (Max)", max(primelstlst) if primelstlst else 0, border=True)
             with kpi3: st.metric("📏 Total de Intervalos", len(primelstlst)-1 if len(primelstlst) > 1 else 0, border=True)
 
-            st.markdown("#### Contagem por Tipo de Intervalo (Gap):")
+            st.markdown("#### Distribuição dos Intervalos (Gaps):")
             col1, col2, col3, col4, col5 = st.columns(5)
             col1.metric("Gémeos (Gap 2)", len(twins))
             col2.metric("Primos (Gap 4)", len(fours))
@@ -169,16 +168,15 @@ def mostrar_app_principal():
 
             if len(primelstlst) > 2:
                 # 2. Gráfico de Dispersão
-                st.subheader("📈 Distribuição e Intensidade dos Intervalos")
+                st.subheader("📍 Dispersão dos Primos")
                 st.info("""
-                **Como ler este gráfico:**
-                * **Eixo X:** Número primo atual.
-                * **Eixo Y e Cor:** Tamanho do salto para o próximo primo.
-                * 🔵 **Azul/Roxo:** Intervalos pequenos (comuns).
-                * 🔴 **Vermelho:** Intervalos grandes (raros).
+                **Legenda do Gráfico:**
+                * **Eixo X ($p$):** A posição na linha dos números.
+                * **Eixo Y (Gap):** A distância até ao próximo primo.
+                * 🎨 **Cor:** Azul (Gaps comuns) ➝ Vermelho (Gaps raros).
                 """)
                 
-                max_y_zoom = st.slider("Altura Máxima do Eixo Y (Zoom):", min_value=6, max_value=max(y_values) if y_values else 100, value=30, step=2)
+                max_y_zoom = st.slider("Zoom Vertical (Eixo Y):", min_value=6, max_value=max(y_values) if y_values else 100, value=30, step=2)
                 
                 fig, ax = plt.subplots(figsize=(12, 6))
                 
@@ -195,22 +193,22 @@ def mostrar_app_principal():
                 )
                 
                 cbar = plt.colorbar(scatter_plot, ax=ax)
-                cbar.set_label('Tamanho do Intervalo (Gap)')
+                cbar.set_label('Tamanho do Gap')
                 
                 ticks_y = np.arange(2, max_y_zoom + 4, 2)
                 ax.set_yticks(ticks_y)
                 ax.set_ylim(0, max_y_zoom + 2)
                 ax.grid(True, axis='y', linestyle='-', linewidth=0.5, alpha=0.3, color='gray')
                 ax.set_xlabel("Número Primo ($p$)", fontsize=11)
-                ax.set_ylabel("Tamanho do Intervalo (Gap)", fontsize=11)
-                ax.set_title(f"Padrão dos Intervalos (Focando nos gaps até {max_y_zoom})", fontsize=13)
+                ax.set_ylabel("Distância ao próximo primo (Gap)", fontsize=11)
+                ax.set_title(f"Mapa de Calor dos Intervalos (Zoom até {max_y_zoom})", fontsize=13)
                 ax.set_xlim(0, max(x_values))
                 st.pyplot(fig)
 
                 # 3. Histograma de Frequências
                 st.write("---")
-                st.subheader("📊 Frequência dos Intervalos")
-                st.markdown("Este gráfico mostra **quais intervalos aparecem mais vezes**.")
+                st.subheader("📊 Histograma de Frequências")
+                st.markdown("Comparação da quantidade de vezes que cada intervalo ocorre.")
                 
                 gap_counts = Counter(y_values)
                 sorted_gaps = sorted(gap_counts.keys())
@@ -218,16 +216,14 @@ def mostrar_app_principal():
                 # Filtra os dados conforme o zoom
                 filtered_gaps = [g for g in sorted_gaps if g <= max_y_zoom]
                 filtered_counts = [gap_counts[g] for g in filtered_gaps]
-
-                # Espaçamento igual
                 x_labels = [str(g) for g in filtered_gaps]
 
                 fig2, ax2 = plt.subplots(figsize=(12, 4))
                 bars = ax2.bar(x_labels, filtered_counts, color='#4e79a7', edgecolor='black', alpha=0.7, width=0.6)
                 
-                ax2.set_xlabel("Tamanho do Intervalo (Gap)")
-                ax2.set_ylabel("Quantidade Encontrada")
-                ax2.set_title("Histograma de Frequência dos Intervalos (Por Categoria)")
+                ax2.set_xlabel("Tipo de Intervalo")
+                ax2.set_ylabel("Frequência")
+                ax2.set_title("Dominância dos Intervalos")
                 ax2.grid(axis='y', linestyle='--', alpha=0.5)
                 
                 for bar in bars:
@@ -239,88 +235,87 @@ def mostrar_app_principal():
                 st.pyplot(fig2)
 
                 if dominio_do_6:
-                    st.success("""
-                    👀 **Observação Importante:**
-                    Nota-se um pico claro no intervalo **6**. 
-                    A explicação para este fenómeno encontra-se na aba **'Sobre o Projeto'**.
-                    """)
+                    with st.container(border=True):
+                        st.markdown("""
+                        ### 💡 Insight Matemático Detetado
+                        **O intervalo 6 é o mais frequente.**
+                        Isto não é coincidência. Consulte a aba **'🎓 Teoria Matemática'** para entender por que razão o 6 "vence" o 2 e o 4.
+                        """)
 
 
         # === TAB 2: EXPLORADOR ===
         with tab_expl:
-            st.header("📂 Explorador de Dados")
+            st.header("🔬 Laboratório de Dados")
             col_left, col_right = st.columns([1, 2])
             
             with col_left:
-                st.markdown("### 1. Filtrar")
+                st.markdown("### 1. Filtragem")
                 gaps_disponiveis = sorted(todos_intervalos.keys())
                 if not gaps_disponiveis:
-                    st.warning("Sem dados.")
+                    st.warning("Aguardando cálculos.")
                 else:
-                    gap_escolhido = st.selectbox("Escolhe o tamanho do intervalo (Gap):", options=gaps_disponiveis)
+                    gap_escolhido = st.selectbox("Selecione o Gap para investigar:", options=gaps_disponiveis)
                     qtd_encontrada = len(todos_intervalos[gap_escolhido])
-                    st.success(f"Encontrados **{qtd_encontrada}** pares com Gap **{gap_escolhido}**.")
+                    st.success(f"Foram isolados **{qtd_encontrada}** pares com Gap **{gap_escolhido}**.")
                     
                     st.markdown("---")
-                    st.markdown("### 2. Exportar")
+                    st.markdown("### 2. Exportação")
                     csv_data = pd.DataFrame(primelstlst, columns=["Números Primos"]).to_csv(index=False).encode('utf-8')
                     st.download_button(
-                        label="💾 Baixar Lista de Primos (CSV)",
+                        label="💾 Exportar Dataset (CSV)",
                         data=csv_data,
-                        file_name='numeros_primos.csv',
+                        file_name='dataset_primos.csv',
                         mime='text/csv',
                         type='primary'
                     )
 
             with col_right:
-                st.markdown("### Visualização")
-                st.write(f"**Tabela de pares com diferença {gap_escolhido}:**")
+                st.markdown(f"### 📋 Resultados: Gap {gap_escolhido}")
                 dados_pares = todos_intervalos[gap_escolhido]
-                df_pares = pd.DataFrame(dados_pares, columns=["Primo 1", "Primo 2"])
+                df_pares = pd.DataFrame(dados_pares, columns=["Primo A", "Primo B"])
                 df_pares.index = df_pares.index + 1
                 st.dataframe(df_pares, height=500, use_container_width=True)
 
         # === TAB 3: SOBRE ===
         with tab_sobre:
-            st.header("ℹ️ Sobre este Projeto")
+            st.header("🎓 Contexto Teórico")
             st.markdown("""
-            Este projeto foi desenvolvido no âmbito da unidade curricular **TMFC** na **Universidade de Aveiro**.
+            Projeto desenvolvido para a unidade curricular **TMFC (Teoria Matemática)** na Universidade de Aveiro.
             
-            ### O Fundamento Matemático: 6n ± 1
-            Todos os números primos maiores que 3 podem ser escritos na forma $6n - 1$ ou $6n + 1$.
-            Isto é uma consequência da aritmética modular, dado que qualquer inteiro pode ser expresso como $6n + k$.
+            ### 📐 A Sequência 6n ± 1
+            Todos os números primos ($p > 3$) residem na forma $6n - 1$ ou $6n + 1$.
+            Isto deve-se à aritmética modular: qualquer inteiro $z$ pode ser escrito como $6n + k$. Ao eliminarmos os múltiplos de 2 e 3, restam apenas os resíduos 1 e 5.
             
             ---
             """)
 
-            # --- EXPLICAÇÃO REESCRITA (MAIS LÚCIDA E DIRETA) ---
+            # --- EXPLICAÇÃO LÚCIDA ---
             if dominio_do_6:
-                st.markdown("""
-                ### 🌟 Porque é que o intervalo 6 aparece tantas vezes?
-                Para um número ser Primo, ele tem de passar dois testes "difíceis": não pode ser divisível por **2** nem por **3**.
-                
+                with st.container(border=True):
+                    st.markdown("""
+                    ### 🌟 O Fenómeno do Intervalo 6
+                    A análise gráfica revelou que o intervalo 6 aparece mais vezes que o 2 ou o 4. Eis a explicação lógica:
 
-                **A vantagem do 6:**
-                O número 6 é o produto perfeito destes dois testes ($2 \\times 3 = 6$).
-                
-                * **Somar 2 (Risco Alto):** Se somares 2 a um primo, corres o risco de cair num número divisível por 3.
-                * **Somar 6 (Segurança):** Como o 6 é divisível por 2 e por 3, ao somares 6 a um primo, manténs as propriedades dele. Se ele já não era divisível por 2 nem por 3, o novo número também não será.
-                
-                **Conclusão:**
-                Somar 6 é o caminho "mais seguro" para encontrar outro primo, pois evita automaticamente os múltiplos de 2 e de 3. Por isso, encontramos mais pares com diferença de 6 do que com 2 ou 4.
-                """)
+                    Para um número ser Primo, ele tem de passar dois "filtros": **não ser divisível por 2** e **não ser divisível por 3**.
+                    
+                    
+                    * **O Número 6:** É o produto perfeito destes filtros ($2 \\times 3 = 6$).
+                    * **A "Segurança" do 6:** Ao somarmos 6 a um número primo, **mantemos as propriedades** de resto dele. Se ele já passou nos filtros do 2 e do 3, o novo número também passará (ao contrário de somar 2 ou 4, que pode criar um múltiplo de 3).
+                    
+                    **Conclusão:** Somar 6 é o caminho estatisticamente "mais limpo" para encontrar o próximo primo.
+                    """)
             
             st.markdown("""
-            ### Glossário de Intervalos
-            * **Primos Gémeos:** Diferença de 2 (ex: 11, 13).
-            * **Primos Primos:** Diferença de 4 (ex: 7, 11).
-            * **Primos Sexy:** Diferença de 6 (ex: 5, 11). O nome vem do latim *sex* (seis).
+            ### 📚 Glossário
+            * **Primos Gémeos:** $p, p+2$ (ex: 11, 13).
+            * **Primos Primos:** $p, p+4$ (ex: 7, 11).
+            * **Primos Sexy:** $p, p+6$ (ex: 5, 11) - do latim *sex* (seis).
             """)
             st.write("---")
-            st.caption("Autores: Catarina Mendes, Diogo Maria, Mateus Carmo e Micael Esteves.")
+            st.caption("Investigação realizada por: Catarina Mendes, Diogo Maria, Mateus Carmo e Micael Esteves.")
 
     else:
-        st.info("👈 Para começar, define o valor de **n** na barra lateral e clica em **Calcular**.")
+        st.info("👈 Defina o valor de **n** na barra lateral e clique em **Gerar Padrões** para iniciar.")
 
 # --- CONTROLADOR PRINCIPAL ---
 if st.session_state['iniciar']:
