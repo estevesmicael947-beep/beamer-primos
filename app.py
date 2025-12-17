@@ -4,20 +4,19 @@ import matplotlib.pyplot as plt
 # --- Configuração da Página ---
 st.set_page_config(page_title="Primos e Padrões", layout="wide")
 
-st.title("Análise de Padrões em Números Primos")
+st.title("🔍 Análise de Padrões em Números Primos")
 st.markdown("""
-Esta aplicação gera números primos baseados na sequência **6n ± 1** e analisa as diferenças entre eles 
-(Primos Gémeos, Primos com diferença de 4, 6, etc.).
+Esta aplicação gera números primos baseados na sequência **6n ± 1** e analisa as diferenças entre eles.
 """)
 
-# --- Entrada de Dados (Substitui o input) ---
+# --- Entrada de Dados ---
 st.sidebar.header("Parâmetros")
 end = st.sidebar.number_input("Ordem final da sequência (n):", min_value=10, max_value=5000, value=100, step=10)
 
-if st.sidebar.button("Calcular"):
+if st.sidebar.button("Calcular 🚀"):
     
     with st.spinner('A processar números primos...'):
-        # --- A TUA LÓGICA DE CÁLCULO (Mantida igual) ---
+        # --- LÓGICA DE CÁLCULO ORIGINAL ---
         primelst = set({2, 3})
         
         # Sequência 6n - 1
@@ -57,7 +56,7 @@ if st.sidebar.button("Calcular"):
         eights = []
         tens = []
 
-        # Encontrar pares (Tua lógica)
+        # Encontrar pares
         for x in range(len(primelstlst)-1):
             diff = primelstlst[x+1] - primelstlst[x]
             pair = (primelstlst[x], primelstlst[x+1])
@@ -75,8 +74,8 @@ if st.sidebar.button("Calcular"):
 
         # --- APRESENTAÇÃO DOS RESULTADOS ---
 
-        # 1. Métricas (Visual bonito para as contagens)
-        st.subheader("Estatísticas Encontradas")
+        # 1. Métricas
+        st.subheader("📊 Estatísticas Encontradas")
         col1, col2, col3, col4, col5 = st.columns(5)
         
         col1.metric("Gémeos (2)", len(twins))
@@ -87,7 +86,7 @@ if st.sidebar.button("Calcular"):
 
         st.info(f"Total de números primos encontrados: **{len(primelstlst)}**")
 
-        # 2. Listas Detalhadas (Dentro de expansores para não encher o ecrã)
+        # 2. Listas Detalhadas
         st.write("---")
         col_left, col_right = st.columns(2)
         
@@ -103,49 +102,28 @@ if st.sidebar.button("Calcular"):
             with st.expander("Ver lista completa de Primos"):
                 st.write(primelstlst)
 
-      # 3. O Gráfico (Pontos com Eixos Identificados)
-        st.write("---")
-        st.subheader("📈 Visualização dos Intervalos (Gaps)")
-        
-        if len(primelstlst) > 2:
-            # Preparar dados
-            x_values = primelstlst[:-1] 
-            y_values = [primelstlst[i+1] - primelstlst[i] for i in range(len(primelstlst)-1)]
+        # 3. O Gráfico (Versão Original - Linha Conectada)
+        if len(twins) > 1:
+            st.write("---")
+            st.subheader("📈 Distância entre pares de Primos Gémeos")
             
-            fig, ax = plt.subplots(figsize=(10, 5))
+            # Cálculo original do gráfico
+            twingap = [twins[x+1][0] - twins[x][0] for x in range(len(twins)-1)]
+            x_axis = [x[0] for x in twins[:-1]]
             
-            # Desenhar apenas os pontos (Pretos, tamanho 15)
-            ax.scatter(x_values, y_values, s=15, c='black', marker='o', alpha=0.6)
+            fig, ax = plt.subplots(figsize=(10, 4))
             
-            # --- IDENTIFICAÇÃO DOS EIXOS ---
+            # Plot original: Linha azul com marcadores
+            ax.plot(x_axis, twingap, marker='o', linestyle='-', color='b', markersize=3, alpha=0.6)
             
-            # Eixo X: Os números primos
-            ax.set_xlabel("Número Primo ($p_n$)", fontsize=12, fontweight='bold')
+            ax.set_title("Variação da distância entre primos gémeos consecutivos")
+            ax.set_xlabel("Valor do Primo")
+            ax.set_ylabel("Distância (Gap)")
+            ax.grid(True, linestyle='--', alpha=0.5)
             
-            # Eixo Y: O tamanho do intervalo (Gap)
-            ax.set_ylabel("Tamanho do Intervalo ($p_{n+1} - p_n$)", fontsize=12, fontweight='bold')
-            
-            # Título do Gráfico
-            ax.set_title(f"Distribuição dos Gaps (até n={end})", fontsize=14)
-            
-            # --- AJUSTE DA ESCALA DO EIXO Y ---
-            # Força o eixo Y a mostrar apenas números pares (2, 4, 6, 8...)
-            max_gap = max(y_values) if len(y_values) > 0 else 10
-            ax.set_yticks(range(0, max_gap + 4, 2))
-            
-            # Adiciona uma grelha horizontal fina para ajudar a ler o valor do eixo Y
-            ax.grid(True, axis='y', linestyle='--', alpha=0.5)
-
-            st.pyplot(fig)
-            
-        else:
-            st.warning("Aumente o valor de n para gerar o gráfico.")
-            
-            # Comando do Streamlit para mostrar o gráfico
             st.pyplot(fig)
         else:
             st.warning("Não há dados suficientes de primos gémeos para gerar o gráfico. Aumente o valor de n.")
 
 else:
-
-    st.write("Ajuste o valor de **n** na barra lateral e clique em calcular.")
+    st.write("👈 Ajuste o valor de **n** na barra lateral e clique em calcular.")
