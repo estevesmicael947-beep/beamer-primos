@@ -1,6 +1,7 @@
 import streamlit as st
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd  # Adicionei pandas para criar a tabela numerada
 
 # --- Configuração da Página ---
 st.set_page_config(page_title="Primos e Padrões", layout="wide")
@@ -15,7 +16,7 @@ def mostrar_tela_inicial():
     with col2:
         st.write("")
         st.write("")
-        # Logo também na capa (opcional, mas fica bem)
+        # Logo da UA
         st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Universidade_de_Aveiro_Logo.svg/1200px-Universidade_de_Aveiro_Logo.svg.png", width=200)
         
         st.markdown("<h1 style='text-align: center;'>🌌 Primos e Padrões</h1>", unsafe_allow_html=True)
@@ -55,7 +56,6 @@ def mostrar_tela_inicial():
 
 def mostrar_app_principal():
     # --- SIDEBAR COM LOGO ---
-    # Logo da Universidade de Aveiro
     st.sidebar.image("https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Universidade_de_Aveiro_Logo.svg/1200px-Universidade_de_Aveiro_Logo.svg.png", use_container_width=True)
     
     st.sidebar.markdown("### ⚙️ Configurações")
@@ -129,7 +129,7 @@ def mostrar_app_principal():
         # --- CRIAÇÃO DOS TABS ---
         tab_dash, tab_expl, tab_sobre = st.tabs(["📊 Dashboard", "📂 Explorador", "ℹ️ Sobre o Projeto"])
 
-        # === TAB 1: DASHBOARD (Métricas e Gráfico) ===
+        # === TAB 1: DASHBOARD ===
         with tab_dash:
             st.subheader("Estatísticas Gerais")
             kpi1, kpi2, kpi3 = st.columns(3)
@@ -149,7 +149,6 @@ def mostrar_app_principal():
 
             if len(primelstlst) > 2:
                 st.subheader("📈 Distribuição e Intensidade dos Intervalos")
-
                 st.info("""
                 **Como ler este gráfico:**
                 * **Eixo X:** Número primo atual.
@@ -191,7 +190,7 @@ def mostrar_app_principal():
 
                 st.pyplot(fig)
 
-        # === TAB 2: EXPLORADOR ===
+        # === TAB 2: EXPLORADOR (MODIFICADO COM DATAFRAME NUMERADO) ===
         with tab_expl:
             st.header("📂 Explorador de Intervalos")
             st.markdown("Selecione um intervalo específico para ver todos os pares de primos correspondentes.")
@@ -205,9 +204,22 @@ def mostrar_app_principal():
                     gap_escolhido = st.selectbox("Escolhe o tamanho do intervalo (Gap):", options=gaps_disponiveis)
                     qtd_encontrada = len(todos_intervalos[gap_escolhido])
                     st.success(f"Encontrados **{qtd_encontrada}** pares com Gap **{gap_escolhido}**.")
+                
                 with col_res:
-                    st.write(f"**Lista de pares com diferença {gap_escolhido}:**")
-                    st.dataframe(todos_intervalos[gap_escolhido], height=400, use_container_width=True)
+                    st.write(f"**Tabela de pares com diferença {gap_escolhido}:**")
+                    
+                    # --- CRIAÇÃO DA TABELA NUMERADA ---
+                    dados_pares = todos_intervalos[gap_escolhido]
+                    
+                    # Criar DataFrame com Pandas
+                    df_pares = pd.DataFrame(dados_pares, columns=["Primo 1", "Primo 2"])
+                    
+                    # Começar o índice em 1 (Nº do Par)
+                    df_pares.index = df_pares.index + 1
+                    
+                    # Mostrar a tabela
+                    st.dataframe(df_pares, height=400, use_container_width=True)
+                    st.caption("*A primeira coluna (índice) indica o número do par nesta sequência.*")
 
         # === TAB 3: SOBRE ===
         with tab_sobre:
