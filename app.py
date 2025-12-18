@@ -322,6 +322,13 @@ def mostrar_app_principal():
             **Conclusão:**
             Se encontrou um buraco na rede (um número primo), a forma mais segura de encontrar outro buraco é dar um salto do tamanho da malha da rede ($2 \\times 3 = 6$).
             """)
+
+            st.markdown("""
+            ### 📚 Glossário de Intervalos
+            * **Primos Gémeos:** $p, p+2$ (ex: 11, 13).
+            * **Primos Primos:** $p, p+4$ (ex: 7, 11).
+            * **Primos Sexy:** $p, p+6$ (ex: 5, 11).
+            """)
             
             st.write("---")
             st.caption("Investigação realizada por: Catarina Mendes, Diogo Maria, Mateus Carmo e Micael Esteves.")
@@ -333,3 +340,4 @@ if st.session_state['iniciar']:
     mostrar_app_principal()
 else:
     mostrar_tela_inicial()
+
