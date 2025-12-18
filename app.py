@@ -306,7 +306,7 @@ def mostrar_app_principal():
             Projeto desenvolvido para a unidade curricular **TMFC (Tópicos Matemáticos e Ferramentas Computacionais)** na Universidade de Aveiro.
             """)
             
-            # --- NOVA SECÇÃO DE EXPLICAÇÃO ---
+            # --- SECÇÃO DE EXPLICAÇÃO ---
             with st.container(border=True):
                 st.subheader("🌟 Porque o intervalo 6 é mais frequente")
                 
@@ -330,7 +330,8 @@ def mostrar_app_principal():
             """)
             
             st.write("---")
-            st.caption("Investigação realizada por: Catarina Mendes, Diogo Maria, Mateus Carmo e Micael Esteves.")
+            # --- CRÉDITOS ATUALIZADOS AQUI ---
+            st.caption("Investigação realizada por: Catarina Mendes, Diogo Maria, Mateus Carmo e Micael Esteves | Com apoio do Gemini (AI).")
 
     else:
         st.info("👈 Defina o valor de **n** na barra lateral e clique em **Gerar Padrões** para iniciar.")
