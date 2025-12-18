@@ -110,6 +110,8 @@ def mostrar_app_principal():
     st.sidebar.markdown("---")
     st.sidebar.caption("Projeto **TMFC** | Universidade de Aveiro")
     st.sidebar.caption("Autores: Catarina, Diogo, Mateus, Micael")
+    # ADICIONADO AQUI NA BARRA LATERAL
+    st.sidebar.caption("Desenvolvido com apoio do Gemini (AI)")
 
     st.title("🧮 Análise de Padrões em Números Primos")
     
@@ -149,12 +151,13 @@ def mostrar_app_principal():
             if len(primelstlst) > 2:
                 st.subheader("📍 Dispersão dos Intervalos")
                 
-                # --- AQUI ESTÁ A ALTERAÇÃO DA LEGENDA DE CORES ---
                 st.info("""
                 **🎨 Legenda do Gráfico:**
+                * **Eixo X:** Valor do Número Primo ($p$).
+                * **Eixo Y:** Distância até ao próximo primo (Intervalo).
                 * 🟣 **Ponto Magenta:** O único intervalo de 1 (entre 2 e 3).
                 * 🔵 **Tons de Azul:** Intervalos pequenos (os mais comuns).
-                * 🔴 **Tons de Vermelho:** Intervalos grandes (primos muito distantes entre si).
+                * 🔴 **Tons de Vermelho:** Intervalos grandes (primos muito distantes).
                 """)
                 
                 max_y_zoom = st.slider("Zoom Vertical (Eixo Y):", min_value=6, max_value=max(y_values) if y_values else 100, value=30, step=2)
