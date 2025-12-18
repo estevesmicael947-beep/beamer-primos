@@ -110,7 +110,6 @@ def mostrar_app_principal():
     st.sidebar.markdown("---")
     st.sidebar.caption("Projeto **TMFC** | Universidade de Aveiro")
     st.sidebar.caption("Autores: Catarina, Diogo, Mateus, Micael")
-    # ADICIONADO AQUI NA BARRA LATERAL
     st.sidebar.caption("Desenvolvido com apoio do Gemini (AI)")
 
     st.title("🧮 Análise de Padrões em Números Primos")
@@ -140,11 +139,39 @@ def mostrar_app_principal():
 
         # === TAB 1: PAINEL DE ANÁLISE ===
         with tab_dash:
+            # --- KPI GLOBAIS ---
             st.markdown("### 📊 Indicadores Globais")
             kpi1, kpi2, kpi3 = st.columns(3)
             with kpi1: st.metric("🔢 Primos Identificados", len(primelstlst), border=True)
             with kpi2: st.metric("🔝 Maior Primo (Max)", max(primelstlst) if primelstlst else 0, border=True)
             with kpi3: st.metric("📏 Total de Intervalos", len(primelstlst)-1 if len(primelstlst) > 1 else 0, border=True)
+
+            # --- NOVA SECÇÃO: CONTAGEM DE PARES ---
+            st.write("")
+            st.markdown("### 🔢 Contagem Detalhada por Intervalo")
+            
+            # Cálculo das quantidades
+            qtd_2 = len(todos_intervalos.get(2, []))
+            qtd_4 = len(todos_intervalos.get(4, []))
+            qtd_6 = len(todos_intervalos.get(6, []))
+            qtd_8 = len(todos_intervalos.get(8, []))
+            
+            # Métricas em destaque
+            col_g2, col_g4, col_g6, col_g8 = st.columns(4)
+            col_g2.metric("Gémeos (Gap 2)", qtd_2, help="Pares com diferença de 2")
+            col_g4.metric("Primos (Gap 4)", qtd_4, help="Pares com diferença de 4")
+            col_g6.metric("Sexy (Gap 6)", qtd_6, help="Pares com diferença de 6", delta="Dominante" if dominio_do_6 else None)
+            col_g8.metric("Gap 8", qtd_8, help="Pares com diferença de 8")
+            
+            # Tabela completa escondida num expander
+            with st.expander("Ver contagem de todos os outros intervalos"):
+                # Cria dataframe de contagem
+                data_counts = {k: len(v) for k, v in todos_intervalos.items()}
+                df_counts = pd.DataFrame(list(data_counts.items()), columns=['Tamanho do Intervalo', 'Quantidade de Pares'])
+                df_counts = df_counts.sort_values(by='Tamanho do Intervalo')
+                
+                # Transpõe para ficar horizontal e fácil de ler
+                st.dataframe(df_counts, use_container_width=True, hide_index=True)
 
             st.write("---")
 
@@ -344,3 +371,4 @@ if st.session_state['iniciar']:
     mostrar_app_principal()
 else:
     mostrar_tela_inicial()
+
