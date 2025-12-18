@@ -83,10 +83,13 @@ def mostrar_app_principal():
 
     if st.sidebar.button("Gerar Padrões ⚡", type="primary"):
         with st.spinner(f'A calcular primos até {limite_real}...'):
+            # Começamos com 2 e 3 (os únicos que não seguem 6n +/- 1)
             primelst = set({2, 3})
             
+            # --- CORREÇÃO DE SEGURANÇA: 1 NÃO É PRIMO ---
             def is_prime(num):
-                if num < 2: return False
+                # Garante explicitamente que 1 ou menores não passam
+                if num <= 1: return False 
                 for i in range(2, int(num**0.5) + 1):
                     if num % i == 0:
                         return False
@@ -94,15 +97,15 @@ def mostrar_app_principal():
 
             n = 1
             while n <= end:
-                num = 6 * n - 1
-                if is_prime(num): primelst.add(num)
+                cand1 = 6 * n - 1
+                cand2 = 6 * n + 1
+                
+                if is_prime(cand1): primelst.add(cand1)
+                if is_prime(cand2): primelst.add(cand2)
                 n += 1
-
-            n = 1    
-            while n <= end:
-                num = 6 * n + 1
-                if is_prime(num): primelst.add(num)
-                n += 1
+            
+            # Segurança extra: remove o 1 se ele tiver entrado por algum motivo
+            primelst.discard(1)
             
             st.session_state['primelstlst'] = sorted(list(primelst))
             st.session_state['calculou'] = True
@@ -146,31 +149,25 @@ def mostrar_app_principal():
             with kpi2: st.metric("🔝 Maior Primo (Max)", max(primelstlst) if primelstlst else 0, border=True)
             with kpi3: st.metric("📏 Total de Intervalos", len(primelstlst)-1 if len(primelstlst) > 1 else 0, border=True)
 
-            # --- NOVA SECÇÃO: CONTAGEM DE PARES ---
+            # --- CONTAGEM DE PARES ---
             st.write("")
             st.markdown("### 🔢 Contagem Detalhada por Intervalo")
             
-            # Cálculo das quantidades
             qtd_2 = len(todos_intervalos.get(2, []))
             qtd_4 = len(todos_intervalos.get(4, []))
             qtd_6 = len(todos_intervalos.get(6, []))
             qtd_8 = len(todos_intervalos.get(8, []))
             
-            # Métricas em destaque
             col_g2, col_g4, col_g6, col_g8 = st.columns(4)
             col_g2.metric("Gémeos (Gap 2)", qtd_2, help="Pares com diferença de 2")
             col_g4.metric("Primos (Gap 4)", qtd_4, help="Pares com diferença de 4")
             col_g6.metric("Sexy (Gap 6)", qtd_6, help="Pares com diferença de 6", delta="Dominante" if dominio_do_6 else None)
             col_g8.metric("Gap 8", qtd_8, help="Pares com diferença de 8")
             
-            # Tabela completa escondida num expander
             with st.expander("Ver contagem de todos os outros intervalos"):
-                # Cria dataframe de contagem
                 data_counts = {k: len(v) for k, v in todos_intervalos.items()}
                 df_counts = pd.DataFrame(list(data_counts.items()), columns=['Tamanho do Intervalo', 'Quantidade de Pares'])
                 df_counts = df_counts.sort_values(by='Tamanho do Intervalo')
-                
-                # Transpõe para ficar horizontal e fácil de ler
                 st.dataframe(df_counts, use_container_width=True, hide_index=True)
 
             st.write("---")
@@ -189,7 +186,6 @@ def mostrar_app_principal():
                 
                 max_y_zoom = st.slider("Zoom Vertical (Eixo Y):", min_value=6, max_value=max(y_values) if y_values else 100, value=30, step=2)
                 
-                # Tamanho Panorâmico (Desktop)
                 fig, ax = plt.subplots(figsize=(12, 6))
                 
                 x_arr = np.array(x_values)
@@ -233,7 +229,6 @@ def mostrar_app_principal():
                 filtered_counts = [gap_counts[g] for g in filtered_gaps]
                 x_labels = [str(g) for g in filtered_gaps]
 
-                # Tamanho Panorâmico (Desktop)
                 fig2, ax2 = plt.subplots(figsize=(12, 4))
                 bars = ax2.bar(x_labels, filtered_counts, color='#4e79a7', edgecolor='black', alpha=0.8, width=0.6)
                 
@@ -263,19 +258,15 @@ def mostrar_app_principal():
         with tab_expl:
             st.header("🔬 Laboratório de Dados")
             
-            # Duas colunas: Lista Geral (Esquerda) e Análise Detalhada (Direita)
             col_list, col_analise = st.columns([1, 2])
             
-            # --- 1. LADO ESQUERDO: LISTA DE TODOS OS PRIMOS ---
             with col_list:
                 st.markdown("### 🔢 Lista Geral")
                 st.caption(f"Total encontrados: {len(primelstlst)}")
                 
-                # Cria Tabela Simples
                 df_todos = pd.DataFrame(primelstlst, columns=["Primos"])
                 st.dataframe(df_todos, height=500, use_container_width=True)
                 
-                # Botão Download Lista Simples
                 csv_todos = df_todos.to_csv(index=False).encode('utf-8')
                 st.download_button(
                     label="💾 Baixar Lista Simples (CSV)",
@@ -285,7 +276,6 @@ def mostrar_app_principal():
                     use_container_width=True
                 )
 
-            # --- 2. LADO DIREITO: ANÁLISE DE INTERVALOS ---
             with col_analise:
                 st.markdown("### 📏 Análise de Intervalos")
                 
@@ -294,26 +284,21 @@ def mostrar_app_principal():
                 if not gaps_disponiveis:
                     st.warning("Sem dados para analisar.")
                 else:
-                    # Seletor de Gap
                     gap_escolhido = st.selectbox("Escolha o Intervalo para ver os pares:", options=gaps_disponiveis)
                     st.success(f"Foram isolados **{len(todos_intervalos[gap_escolhido])}** pares com Intervalo **{gap_escolhido}**.")
                     
-                    # Tabela de Pares
                     dados_pares = todos_intervalos[gap_escolhido]
                     df_pares = pd.DataFrame(dados_pares, columns=["Primo A", "Primo B"])
                     
-                    # Formatar visualmente para (A, B) na tabela
                     df_visual = df_pares.copy()
                     df_visual['Par'] = df_visual.apply(lambda x: f"({x['Primo A']}, {x['Primo B']})", axis=1)
                     st.dataframe(df_visual[['Par']], height=350, use_container_width=True)
                     
                     st.markdown("---")
                     
-                    # --- EXPORTAÇÃO COMPLETA ---
                     export_dict = {}
                     for gap in gaps_disponiveis:
                         col_name = f"Intervalo {gap}"
-                        # Usamos (p1, p2) para o Excel
                         pares_formatados = [f"({p[0]}, {p[1]})" for p in todos_intervalos[gap]]
                         export_dict[col_name] = pares_formatados
                     
@@ -338,7 +323,6 @@ def mostrar_app_principal():
             Projeto desenvolvido para a unidade curricular **TMFC (Tópicos Matemáticos e Ferramentas Computacionais)** na Universidade de Aveiro.
             """)
             
-            # --- SECÇÃO DE EXPLICAÇÃO ---
             with st.container(border=True):
                 st.subheader("🌟 Porque o intervalo 6 é mais frequente")
                 
