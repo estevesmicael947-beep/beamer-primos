@@ -304,24 +304,23 @@ def mostrar_app_principal():
             st.header("🎓 Contexto Teórico")
             st.markdown("""
             Projeto desenvolvido para a unidade curricular **TMFC (Tópicos Matemáticos e Ferramentas Computacionais)** na Universidade de Aveiro.
-            
-            ### 📐 A Lógica do Produto (2 x 3)
-            Para um número sobreviver e ser primo, ele tem de passar pelos dois primeiros "filtros" da matemática:
-            1.  **Filtro do 2:** Não pode ser par.
-            2.  **Filtro do 3:** Não pode ser múltiplo de 3.
-            
-            ### O Segredo do 6
-            O número 6 é o **produto perfeito** destes dois filtros:
-            $$6 = 2 \\times 3$$
-            
-            Isto significa que o 6 é "invisível" para estes filtros.
-            
-            * **Somar 2 ou 4:** É como atirar uma pedra ao acaso. Muitas vezes bate na rede do filtro do 3 e o número é eliminado (não é primo).
-            * **Somar 6:** Como o 6 é feito de $2 \\times 3$, somar 6 **não altera** a divisibilidade por 2 nem por 3.
-            
-            **Conclusão:**
-            Se encontrou um buraco na rede (um número primo), a forma mais segura de encontrar outro buraco é dar um salto do tamanho da malha da rede ($2 \\times 3 = 6$).
             """)
+            
+            # --- NOVA SECÇÃO DE EXPLICAÇÃO ---
+            with st.container(border=True):
+                st.subheader("🌟 Porque o intervalo 6 é mais frequente")
+                
+                st.markdown("""
+                Todo primo maior que 3 não é múltiplo de 2 nem de 3, logo pertence às formas:
+                
+                $$
+                6n - 1 \\quad \\text{ou} \\quad 6n + 1
+                $$
+                
+                O intervalo 6 é o **menor deslocamento** que mantém essas duas condições ao mesmo tempo, criando mais pares candidatos a primos do que outros intervalos.
+                
+                > *Por isso, observa-se experimentalmente uma maior frequência de pares de primos separados por 6.*
+                """)
 
             st.markdown("""
             ### 📚 Glossário de Intervalos
@@ -340,4 +339,3 @@ if st.session_state['iniciar']:
     mostrar_app_principal()
 else:
     mostrar_tela_inicial()
-
