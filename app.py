@@ -149,11 +149,12 @@ def mostrar_app_principal():
             if len(primelstlst) > 2:
                 st.subheader("📍 Dispersão dos Intervalos")
                 
+                # --- AQUI ESTÁ A ALTERAÇÃO DA LEGENDA DE CORES ---
                 st.info("""
-                **Legenda do Gráfico:**
-                * **Eixo X:** Posição do primo. | **Eixo Y:** Distância ao próximo.
+                **🎨 Legenda do Gráfico:**
                 * 🟣 **Ponto Magenta:** O único intervalo de 1 (entre 2 e 3).
-                * 🔵 **Azul:** Intervalos mais frequentes.
+                * 🔵 **Tons de Azul:** Intervalos pequenos (os mais comuns).
+                * 🔴 **Tons de Vermelho:** Intervalos grandes (primos muito distantes entre si).
                 """)
                 
                 max_y_zoom = st.slider("Zoom Vertical (Eixo Y):", min_value=6, max_value=max(y_values) if y_values else 100, value=30, step=2)
@@ -220,13 +221,13 @@ def mostrar_app_principal():
 
                 if dominio_do_6:
                     with st.container(border=True):
-                        st.markdown("### 🔍 Padrão Curioso Detetado")
+                        st.markdown("### 💡 Observação Matemática Detetada")
                         st.markdown("""
                         Os dados mostram claramente que o **Intervalo 6** é muito mais frequente que o 2 ou o 4.
                         
                         Mas porquê?
                         """)
-                        st.info("👉 **Vá à aba 'Teoria Matemática' para descobrir a explicação!**")
+                        st.info("👉 **Vá à aba '🎓 Teoria Matemática' para descobrir a explicação!**")
 
         # === TAB 2: EXPLORADOR (Laboratório de Dados) ===
         with tab_expl:
