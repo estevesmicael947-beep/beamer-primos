@@ -83,12 +83,10 @@ def mostrar_app_principal():
 
     if st.sidebar.button("Gerar Padrões ⚡", type="primary"):
         with st.spinner(f'A calcular primos até {limite_real}...'):
-            # Começamos com 2 e 3 (os únicos que não seguem 6n +/- 1)
             primelst = set({2, 3})
             
-            # --- CORREÇÃO DE SEGURANÇA: 1 NÃO É PRIMO ---
             def is_prime(num):
-                # Garante explicitamente que 1 ou menores não passam
+                # --- CORREÇÃO: Garante que 1 não passa ---
                 if num <= 1: return False 
                 for i in range(2, int(num**0.5) + 1):
                     if num % i == 0:
@@ -97,14 +95,13 @@ def mostrar_app_principal():
 
             n = 1
             while n <= end:
-                cand1 = 6 * n - 1
-                cand2 = 6 * n + 1
-                
-                if is_prime(cand1): primelst.add(cand1)
-                if is_prime(cand2): primelst.add(cand2)
+                num1 = 6 * n - 1
+                num2 = 6 * n + 1
+                if is_prime(num1): primelst.add(num1)
+                if is_prime(num2): primelst.add(num2)
                 n += 1
             
-            # Segurança extra: remove o 1 se ele tiver entrado por algum motivo
+            # --- SEGURANÇA EXTRA: Remove o 1 se ele existir ---
             primelst.discard(1)
             
             st.session_state['primelstlst'] = sorted(list(primelst))
@@ -149,7 +146,7 @@ def mostrar_app_principal():
             with kpi2: st.metric("🔝 Maior Primo (Max)", max(primelstlst) if primelstlst else 0, border=True)
             with kpi3: st.metric("📏 Total de Intervalos", len(primelstlst)-1 if len(primelstlst) > 1 else 0, border=True)
 
-            # --- CONTAGEM DE PARES ---
+            # --- CONTAGEM DETALHADA ---
             st.write("")
             st.markdown("### 🔢 Contagem Detalhada por Intervalo")
             
@@ -355,4 +352,3 @@ if st.session_state['iniciar']:
     mostrar_app_principal()
 else:
     mostrar_tela_inicial()
-
