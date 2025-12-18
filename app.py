@@ -220,18 +220,19 @@ def mostrar_app_principal():
 
                 if dominio_do_6:
                     with st.container(border=True):
+                        st.markdown("### 🔍 Padrão Curioso Detetado")
                         st.markdown("""
-                        ### 💡 Observação Matemática Detetada
-                        **O intervalo 6 é o mais frequente.**
-                        Isto confirma a tendência de que múltiplos de 6 são privilegiados, mesmo quando comparados com intervalos menores como 4.
+                        Os dados mostram claramente que o **Intervalo 6** é muito mais frequente que o 2 ou o 4.
+                        
+                        Mas porquê?
                         """)
+                        st.info("👉 **Vá à aba 'Teoria Matemática' para descobrir a explicação!**")
 
         # === TAB 2: EXPLORADOR (Laboratório de Dados) ===
         with tab_expl:
             st.header("🔬 Laboratório de Dados")
             
             # Duas colunas: Lista Geral (Esquerda) e Análise Detalhada (Direita)
-            # No Desktop damos mais espaço à análise (proporção 1 para 2)
             col_list, col_analise = st.columns([1, 2])
             
             # --- 1. LADO ESQUERDO: LISTA DE TODOS OS PRIMOS ---
@@ -330,7 +331,6 @@ def mostrar_app_principal():
             """)
             
             st.write("---")
-            # --- CRÉDITOS ATUALIZADOS AQUI ---
             st.caption("Investigação realizada por: Catarina Mendes, Diogo Maria, Mateus Carmo e Micael Esteves | Com apoio do Gemini (AI).")
 
     else:
